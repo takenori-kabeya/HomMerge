@@ -13,6 +13,11 @@ The name "HomMerge" is a portmanteau of **"Homage"** and **"Merge"** — a tribu
 At this moment, only the application binary is available in the [Releases](https://github.com/takenori-kabeya/HomMerge/releases) section. 
 **We are planning to open-source the complete codebase in the near future!** Stay tuned.
 
+## Caution ##
+Current Version supports:
+- only UTF-8.
+- only LF. no CR/CRLF.
+
 ---
 
 **HomMerge** は、Mac専用のファイル比較・マージツールです。
@@ -23,3 +28,9 @@ At this moment, only the application binary is available in the [Releases](https
 ## 🚀 現在のステータス
 現在は [Releases](https://github.com/takenori-kabeya/HomMerge/releases)ページにて、Mac版のアプリケーション（バイナリ）のみを先行して公開しています。
 **近い将来、ソースコードもすべてオープンソースとして公開する予定です。** どうぞお楽しみに！
+
+## 注意 ##
+現在のバージョンは
+- UTF-8のみサポート
+- 改行はLFのみサポート。CR/CRLFはサポートしていません。
+
