@@ -6,7 +6,7 @@ The name "HomMerge" is a portmanteau of **"Homage"** and **"Merge"** — a tribu
 > **Note:** While heavily inspired by its UI and philosophy, HomMerge is built entirely independently and does not use any source code from WinMerge.
 
 ## 🚀 Current Status
-At this moment, only the application binary is available in the [Releases](リンク先のURL) section. 
+At this moment, only the application binary is available in the [Releases](https://github.com/takenori-kabeya/HomMerge/releases) section. 
 **We are planning to open-source the complete codebase in the near future!** Stay tuned.
 
 ---
