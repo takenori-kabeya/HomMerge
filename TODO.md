@@ -4,9 +4,11 @@
 - [ ] Source code refactoring and preparation for public release
 - [ ] Support for line endings other than LF
 - [ ] Support for character sets other than UTF-8
-- [x] Copy text
+- [x] Copy text in file comparison tab
+- [ ] Copy file in folder comparison tab
 - [x] Undo merge (Copy Left/Right)
 - [ ] Direct in-view editing
+- [ ] Undo text editing
 - [ ] UI localization (multi-language support)
 - [ ] File filtering (ignore list)
 - [ ] Comparison of two files selected in Finder
@@ -33,9 +35,11 @@
 - [ ] ソースコードの公開準備・リファクタリング
 - [ ] LF以外の改行コードへの対応
 - [ ] UTF-8以外の文字セットへの対応
-- [x] 比較中テキストのコピー
-- [x] Undo（右へコピー、左へコピー）
+- [x] ファイル比較中テキストのコピー
+- [ ] フォルダ比較中ファイルのコピー
+- [x] マージのUndo（右へコピー、左へコピー）
 - [ ] 画面での直接編集
+- [ ] 直接編集のUndo
 - [ ] UIの多言語対応
 - [ ] ファイルのフィルタ（無視リスト）
 - [ ] Finderで選んだ2つのファイルの比較
