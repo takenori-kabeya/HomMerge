@@ -4,8 +4,8 @@
 - [ ] Source code refactoring and preparation for public release
 - [ ] Support for line endings other than LF
 - [ ] Support for character sets other than UTF-8
-- [ ] Copy
-- [ ] Undo
+- [x] Copy text
+- [x] Undo merge (Copy Left/Right)
 - [ ] Direct in-view editing
 - [ ] UI localization (multi-language support)
 - [ ] File filtering (ignore list)
@@ -33,8 +33,8 @@
 - [ ] ソースコードの公開準備・リファクタリング
 - [ ] LF以外の改行コードへの対応
 - [ ] UTF-8以外の文字セットへの対応
-- [ ] コピー
-- [ ] Undo
+- [x] 比較中テキストのコピー
+- [x] Undo（右へコピー、左へコピー）
 - [ ] 画面での直接編集
 - [ ] UIの多言語対応
 - [ ] ファイルのフィルタ（無視リスト）
