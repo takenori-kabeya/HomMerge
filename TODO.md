@@ -4,6 +4,9 @@
 - [ ] Source code refactoring and preparation for public release
 - [ ] Support for line endings other than LF
 - [ ] Support for character sets other than UTF-8
+- [ ] Copy
+- [ ] Undo
+- [ ] Direct in-view editing
 - [ ] UI localization (multi-language support)
 - [ ] File filtering (ignore list)
 - [ ] Comparison of two files selected in Finder
@@ -19,7 +22,6 @@
 
 ## Under Consideration
 
-- Direct in-view editing
 - Syntax highlighting
 - Automatic backup file generation
 
@@ -31,6 +33,9 @@
 - [ ] ソースコードの公開準備・リファクタリング
 - [ ] LF以外の改行コードへの対応
 - [ ] UTF-8以外の文字セットへの対応
+- [ ] コピー
+- [ ] Undo
+- [ ] 画面での直接編集
 - [ ] UIの多言語対応
 - [ ] ファイルのフィルタ（無視リスト）
 - [ ] Finderで選んだ2つのファイルの比較
@@ -46,7 +51,6 @@
 
 ## Under Consideration
 
-- 画面での直接編集
 - シンタックスハイライト
 - バックアップファイルの自動生成
 
