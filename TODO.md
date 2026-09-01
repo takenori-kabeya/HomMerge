@@ -12,8 +12,8 @@
 - [ ] UI localization (multi-language support)
 - [ ] File filtering (ignore list)
 - [ ] Comparison of two files selected in Finder
-- [ ] File copying within the folder comparison pane
-- [ ] Command-line launch support
+- [x] File copying within the folder comparison pane
+- [x] Command-line launch support
 
 ## NOT TODO
 
@@ -43,8 +43,8 @@
 - [ ] UIの多言語対応
 - [ ] ファイルのフィルタ（無視リスト）
 - [ ] Finderで選んだ2つのファイルの比較
-- [ ] フォルダ比較ペインでのファイルのコピー
-- [ ] コマンドラインからの起動
+- [x] フォルダ比較ペインでのファイルのコピー
+- [x] コマンドラインからの起動
 
 ## NOT TODO
 
