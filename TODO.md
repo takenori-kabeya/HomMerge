@@ -18,12 +18,12 @@
 ## NOT TODO
 
 - Creating an exact clone of WinMerge
-- Three-way file comparison
 - Comparison of non-text files
 - Support for non-Apple operating systems (i.e., environments where SwiftUI is unavailable)
 
 ## Under Consideration
 
+- Three-way file comparison
 - Syntax highlighting
 - Automatic backup file generation
 
@@ -49,12 +49,12 @@
 ## NOT TODO
 
 - WinMergeの完全コピー
-- 3ファイルの比較
 - テキストファイル以外の比較
 - Apple系OS以外への対応(=SwiftUIが使えない環境への対応)
 
 ## Under Consideration
 
+- 3ファイルの比較
 - シンタックスハイライト
 - バックアップファイルの自動生成
 
