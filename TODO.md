@@ -2,8 +2,9 @@
 
 - [x] Initial app release (binary distribution)
 - [ ] Source code refactoring and preparation for public release
-- [ ] Support for line endings other than LF
-- [ ] Support for character sets other than UTF-8
+- [x] Support for line endings other than LF
+- [x] Support for character sets Shift_JIS
+- [ ] Support for character sets other than UTF-8 and Shift_JIS
 - [x] Copy text in file comparison tab
 - [x] Copy file in folder comparison tab
 - [x] Undo merge (Copy Left/Right)
@@ -33,8 +34,9 @@
 
 - [x] アプリの初回リリース（バイナリ公開）
 - [ ] ソースコードの公開準備・リファクタリング
-- [ ] LF以外の改行コードへの対応
-- [ ] UTF-8以外の文字セットへの対応
+- [x] LF以外の改行コードへの対応
+- [x] Shift_JISへの対応
+- [ ] UTF-8, Shift_JIS以外の文字セットへの対応
 - [x] ファイル比較中テキストのコピー
 - [x] フォルダ比較中ファイルのコピー
 - [x] マージのUndo（右へコピー、左へコピー）
