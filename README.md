@@ -15,8 +15,7 @@ At this moment, only the application binary is available in the [Releases](https
 
 ## Caution ##
 Current Version supports:
-- only UTF-8.
-- only LF. no CR/CRLF.
+- only UTF-8 and Shift_JIS.
 
 ---
 
@@ -30,7 +29,6 @@ Current Version supports:
 **近い将来、ソースコードもすべてオープンソースとして公開する予定です。** どうぞお楽しみに！
 
 ## 注意 ##
-現在のバージョンは
-- UTF-8のみサポート
-- 改行はLFのみサポート。CR/CRLFはサポートしていません。
+現在のバージョンは以下の制限があります。
+- UTF-8, Shift_JISのみサポート
 
