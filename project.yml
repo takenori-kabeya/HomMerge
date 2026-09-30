@@ -1,0 +1,125 @@
+name: HomMerge
+options:
+  bundleIdPrefix: jp.cabinetwork
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  xcodeVersion: "26.6"
+
+packages:
+  DiffEngine:
+    path: Packages/DiffEngine
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    DEAD_CODE_STRIPPING: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    STRING_CATALOG_GENERATE_SYMBOLS: YES
+
+targets:
+  HomMerge:
+    type: application
+    platform: macOS
+    sources:
+      - path: HomMerge
+    dependencies:
+      - package: DiffEngine
+    preBuildScripts:
+      - name: Generate EULA.rtf
+        basedOnDependencyAnalysis: false
+        script: "OUTPUT=\"${DERIVED_FILE_DIR}/EULA.rtf\" \"${SRCROOT}/Scripts/generate-eula-rtf.sh\""
+        inputFiles:
+          - $(SRCROOT)/docs/EULA.md
+        outputFiles:
+          - $(DERIVED_FILE_DIR)/EULA.rtf
+    postBuildScripts:
+      - name: Copy EULA.rtf to bundle
+        basedOnDependencyAnalysis: false
+        script: |
+          mkdir -p "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
+          cp "${DERIVED_FILE_DIR}/EULA.rtf" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EULA.rtf"
+        inputFiles:
+          - $(DERIVED_FILE_DIR)/EULA.rtf
+        outputFiles:
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/EULA.rtf
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: jp.cabinetwork.HomMerge
+        PRODUCT_NAME: HomMerge
+        VERSIONING_SYSTEM: apple-generic
+        MARKETING_VERSION: "0.1.6"
+        CURRENT_PROJECT_VERSION: "56"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: HomMerge/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: HomMerge
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.developer-tools
+        INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 Takenori Kabeya and HomMerge contributors"
+        INFOPLIST_KEY_NSPrincipalClass: NSApplication
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_HARDENED_RUNTIME: YES
+        DEAD_CODE_STRIPPING: YES
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        STRING_CATALOG_GENERATE_SYMBOLS: YES
+        CODE_SIGN_STYLE: Automatic
+        SWIFT_STRICT_CONCURRENCY: complete
+      configs:
+        Debug:
+          ENABLE_TESTABILITY: YES
+
+  HomMergeTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: HomMergeTests
+    dependencies:
+      - target: HomMerge
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: jp.cabinetwork.HomMergeTests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/HomMerge.app/Contents/MacOS/HomMerge
+        BUNDLE_LOADER: $(TEST_HOST)
+        CODE_SIGN_STYLE: Automatic
+        DEAD_CODE_STRIPPING: YES
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+
+  HomMergeUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: HomMergeUITests
+    dependencies:
+      - target: HomMerge
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: jp.cabinetwork.HomMergeUITests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: HomMerge
+        CODE_SIGN_STYLE: Automatic
+        DEAD_CODE_STRIPPING: YES
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+
+schemes:
+  HomMerge:
+    build:
+      targets:
+        HomMerge: all
+        HomMergeTests: [test]
+        HomMergeUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - HomMergeTests
+        - HomMergeUITests
+        - package: DiffEngine/DiffEngineTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

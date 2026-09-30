@@ -1,7 +1,7 @@
 ## Roadmap / TODO
 
 - [x] Initial app release (binary distribution)
-- [ ] Source code refactoring and preparation for public release
+- [x] Source code refactoring and preparation for public release
 - [x] Support for line endings other than LF
 - [x] Support for character sets Shift_JIS
 - [ ] Support for character sets other than UTF-8 and Shift_JIS
@@ -12,7 +12,7 @@
 - [x] Undo text editing
 - [ ] UI localization (multi-language support)
 - [ ] File filtering (ignore list)
-- [ ] Comparison of two files selected in Finder
+- [x] Comparison of two files selected in Finder
 - [x] File copying within the folder comparison pane
 - [x] Command-line launch support
 
@@ -33,7 +33,7 @@
 ## Roadmap / TODO
 
 - [x] アプリの初回リリース（バイナリ公開）
-- [ ] ソースコードの公開準備・リファクタリング
+- [x] ソースコードの公開準備・リファクタリング
 - [x] LF以外の改行コードへの対応
 - [x] Shift_JISへの対応
 - [ ] UTF-8, Shift_JIS以外の文字セットへの対応
@@ -44,7 +44,7 @@
 - [x] 直接編集のUndo
 - [ ] UIの多言語対応
 - [ ] ファイルのフィルタ（無視リスト）
-- [ ] Finderで選んだ2つのファイルの比較
+- [x] Finderで選んだ2つのファイルの比較
 - [x] フォルダ比較ペインでのファイルのコピー
 - [x] コマンドラインからの起動
 

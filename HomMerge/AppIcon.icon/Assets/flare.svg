@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_3" data-name="レイヤー 3" xmlns="http://www.w3.org/2000/svg" width="1128.95" height="1090.56" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1128.95 1090.56">
+  <defs>
+    <radialGradient id="_名称未設定グラデーション_286" data-name="名称未設定グラデーション 286" cx="549.98" cy="568.47" fx="549.98" fy="568.47" r="165.92" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffb300"/>
+      <stop offset="0" stop-color="#fab300" stop-opacity=".95"/>
+      <stop offset=".01" stop-color="#eeb600" stop-opacity=".83"/>
+      <stop offset=".02" stop-color="#dcba00" stop-opacity=".64"/>
+      <stop offset=".27" stop-color="#e7c840" stop-opacity=".42"/>
+      <stop offset=".51" stop-color="#f4d783" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#ffe4bf" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="549.98" cy="568.47" r="178.65" style="fill: url(#_名称未設定グラデーション_286);"/>
+</svg>
