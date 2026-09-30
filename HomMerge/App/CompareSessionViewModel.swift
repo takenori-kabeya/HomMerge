@@ -28,7 +28,7 @@ final class CompareSessionViewModel {
         case let (nil, r?):
             return r
         case (nil, nil):
-            return "Compare"
+            return String(localized: "Compare")
         }
     }
 
@@ -61,12 +61,12 @@ final class CompareSessionViewModel {
         switch phase {
         case .idle:
             if leftURL == nil && rightURL == nil {
-                return "Open or drop items on both sides, then Compare"
+                return String(localized: "Open or drop items on both sides, then Compare")
             }
             if leftURL == nil || rightURL == nil {
-                return "Open or drop items on both sides, then Compare"
+                return String(localized: "Open or drop items on both sides, then Compare")
             }
-            return "Ready to compare — press Compare"
+            return String(localized: "Ready to compare — press Compare")
         case .files(let viewModel):
             return viewModel.statusText
         case .folders(let viewModel):
@@ -111,12 +111,12 @@ final class CompareSessionViewModel {
     }
 
     func openLeft() {
-        guard let url = choosePath(title: "Open Left") else { return }
+        guard let url = choosePath(title: String(localized: "Open Left")) else { return }
         setPath(url, side: .left)
     }
 
     func openRight() {
-        guard let url = choosePath(title: "Open Right") else { return }
+        guard let url = choosePath(title: String(localized: "Open Right")) else { return }
         setPath(url, side: .right)
     }
 
@@ -127,13 +127,13 @@ final class CompareSessionViewModel {
         case .incomplete:
             phase = .idle
             if leftURL == nil || rightURL == nil {
-                errorMessage = "Specify both left and right paths"
+                errorMessage = String(localized: "Specify both left and right paths")
             } else {
-                errorMessage = "The specified path was not found"
+                errorMessage = String(localized: "The specified path was not found")
             }
         case .mismatch:
             phase = .idle
-            errorMessage = "Both sides must be files, or both sides must be folders"
+            errorMessage = String(localized: "Both sides must be files, or both sides must be folders")
         case .files:
             guard let leftURL, let rightURL else { return }
             let viewModel = FileCompareViewModel()
@@ -176,16 +176,20 @@ final class CompareSessionViewModel {
         }
 
         var dirtySides: [String] = []
-        if fileCompare.state.isLeftDirty { dirtySides.append("left") }
-        if fileCompare.state.isRightDirty { dirtySides.append("right") }
+        if fileCompare.state.isLeftDirty { dirtySides.append(String(localized: "left")) }
+        if fileCompare.state.isRightDirty { dirtySides.append(String(localized: "right")) }
+        let joined = dirtySides.joined(separator: " \(String(localized: "and")) ")
 
         let alert = NSAlert()
-        alert.messageText = "Discard unsaved changes?"
-        alert.informativeText =
-            "The \(dirtySides.joined(separator: " and ")) file\(dirtySides.count == 1 ? " has" : "s have") unsaved changes."
+        alert.messageText = String(localized: "Discard unsaved changes?")
+        if dirtySides.count == 1 {
+            alert.informativeText = String(localized: "The \(joined) file has unsaved changes.")
+        } else {
+            alert.informativeText = String(localized: "The \(joined) files have unsaved changes.")
+        }
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Discard")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Discard"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
         return alert.runModal() == .alertFirstButtonReturn
     }
 

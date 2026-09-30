@@ -122,7 +122,7 @@ enum FolderCompareSelection {
         let rightURL = rightSource.rightURL
         let enabled = leftURL != nil && rightURL != nil
         return CrossFileCompareOption(
-            title: "Compare Left: \(leftLabel) – Right: \(rightLabel)",
+            title: String(localized: "Compare Left: \(leftLabel) – Right: \(rightLabel)"),
             isEnabled: enabled,
             leftURL: enabled ? leftURL : nil,
             rightURL: enabled ? rightURL : nil

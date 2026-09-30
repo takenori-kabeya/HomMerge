@@ -24,11 +24,20 @@ public enum PathHeaderLabel {
         let maxChars = max(maxCharactersPerSide, 1)
         switch (leftPath, rightPath) {
         case (nil, nil):
-            return Pair(left: "Left", right: "Right")
+            return Pair(
+                left: String(localized: "Left", bundle: .module),
+                right: String(localized: "Right", bundle: .module)
+            )
         case let (left?, nil):
-            return Pair(left: fit(left, maxCharacters: maxChars), right: "Right")
+            return Pair(
+                left: fit(left, maxCharacters: maxChars),
+                right: String(localized: "Right", bundle: .module)
+            )
         case let (nil, right?):
-            return Pair(left: "Left", right: fit(right, maxCharacters: maxChars))
+            return Pair(
+                left: String(localized: "Left", bundle: .module),
+                right: fit(right, maxCharacters: maxChars)
+            )
         case let (left?, right?):
             if left == right {
                 let label = fit(left, maxCharacters: maxChars)

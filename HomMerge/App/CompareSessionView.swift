@@ -193,10 +193,10 @@ struct CompareSessionView: View {
             try fileManager.copyItem(at: source, to: destination)
         } catch {
             let alert = NSAlert()
-            alert.messageText = "Could not create backup file"
+            alert.messageText = String(localized: "Could not create backup file")
             alert.informativeText = error.localizedDescription
             alert.alertStyle = .warning
-            alert.addButton(withTitle: "OK")
+            alert.addButton(withTitle: String(localized: "OK"))
             alert.runModal()
         }
     }
@@ -232,8 +232,8 @@ struct CompareSessionView: View {
                     .foregroundStyle(.secondary)
             }
             HStack(spacing: 24) {
-                dropZone(title: "Left", side: .left)
-                dropZone(title: "Right", side: .right)
+                dropZone(title: String(localized: "Left"), side: .left)
+                dropZone(title: String(localized: "Right"), side: .right)
             }
             .frame(maxWidth: 640)
         }

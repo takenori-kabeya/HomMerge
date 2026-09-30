@@ -16,17 +16,17 @@ enum FileCompareToolbarItem: String, CaseIterable, Sendable {
 
     var title: String {
         switch self {
-        case .copyRight: return "Copy →"
-        case .copyLeft: return "← Copy"
-        case .copyRightAndNext: return "Copy → and Next"
-        case .copyLeftAndNext: return "← Copy and Next"
-        case .refresh: return "Refresh"
-        case .firstDiff: return "First Diff"
-        case .previousDiff: return "Previous Diff"
-        case .currentDiff: return "Current Diff"
-        case .nearestDiff: return "Nearest Diff"
-        case .nextDiff: return "Next Diff"
-        case .lastDiff: return "Last Diff"
+        case .copyRight: return String(localized: "Copy →")
+        case .copyLeft: return String(localized: "← Copy")
+        case .copyRightAndNext: return String(localized: "Copy → and Next")
+        case .copyLeftAndNext: return String(localized: "← Copy and Next")
+        case .refresh: return String(localized: "Refresh")
+        case .firstDiff: return String(localized: "First Diff")
+        case .previousDiff: return String(localized: "Previous Diff")
+        case .currentDiff: return String(localized: "Current Diff")
+        case .nearestDiff: return String(localized: "Nearest Diff")
+        case .nextDiff: return String(localized: "Next Diff")
+        case .lastDiff: return String(localized: "Last Diff")
         }
     }
 
@@ -49,27 +49,27 @@ enum FileCompareToolbarItem: String, CaseIterable, Sendable {
     var help: String {
         switch self {
         case .copyRight:
-            return "Copy current difference to the right"
+            return String(localized: "Copy current difference to the right")
         case .copyLeft:
-            return "Copy current difference to the left"
+            return String(localized: "Copy current difference to the left")
         case .copyRightAndNext:
-            return "Copy current difference to the right and go to the next difference"
+            return String(localized: "Copy current difference to the right and go to the next difference")
         case .copyLeftAndNext:
-            return "Copy current difference to the left and go to the next difference"
+            return String(localized: "Copy current difference to the left and go to the next difference")
         case .refresh:
-            return "Reload both files from disk"
+            return String(localized: "Reload both files from disk")
         case .firstDiff:
-            return "Go to the first difference"
+            return String(localized: "Go to the first difference")
         case .previousDiff:
-            return "Go to the previous difference"
+            return String(localized: "Go to the previous difference")
         case .currentDiff:
-            return "Scroll to the current difference"
+            return String(localized: "Scroll to the current difference")
         case .nearestDiff:
-            return "Select the difference nearest to the caret"
+            return String(localized: "Select the difference nearest to the caret")
         case .nextDiff:
-            return "Go to the next difference"
+            return String(localized: "Go to the next difference")
         case .lastDiff:
-            return "Go to the last difference"
+            return String(localized: "Go to the last difference")
         }
     }
 }
@@ -106,11 +106,11 @@ enum SessionToolbarItem: String, CaseIterable, Sendable {
 
     var title: String {
         switch self {
-        case .openLeft: return "Open Left…"
-        case .openRight: return "Open Right…"
-        case .compare: return "Compare"
-        case .saveLeft: return "Save Left"
-        case .saveRight: return "Save Right"
+        case .openLeft: return String(localized: "Open Left…")
+        case .openRight: return String(localized: "Open Right…")
+        case .compare: return String(localized: "Compare")
+        case .saveLeft: return String(localized: "Save Left")
+        case .saveRight: return String(localized: "Save Right")
         }
     }
 
@@ -137,11 +137,11 @@ enum FolderCompareToolbarItem: String, CaseIterable, Sendable {
 
     var title: String {
         switch self {
-        case .compareSelectedFiles: return "Compare Selected Files"
-        case .copyRight: return "Copy →"
-        case .copyLeft: return "← Copy"
-        case .delete: return "Delete"
-        case .refresh: return "Refresh"
+        case .compareSelectedFiles: return String(localized: "Compare Selected Files")
+        case .copyRight: return String(localized: "Copy →")
+        case .copyLeft: return String(localized: "← Copy")
+        case .delete: return String(localized: "Delete")
+        case .refresh: return String(localized: "Refresh")
         }
     }
 
@@ -157,11 +157,11 @@ enum FolderCompareToolbarItem: String, CaseIterable, Sendable {
 
     var help: String {
         switch self {
-        case .compareSelectedFiles: return "Compare Selected Files"
-        case .copyRight: return "Copy selected item to the right folder"
-        case .copyLeft: return "Copy selected item to the left folder"
-        case .delete: return "Move selected left-only or right-only files to the Trash"
-        case .refresh: return "Rescan both folders from disk"
+        case .compareSelectedFiles: return String(localized: "Compare Selected Files")
+        case .copyRight: return String(localized: "Copy selected item to the right folder")
+        case .copyLeft: return String(localized: "Copy selected item to the left folder")
+        case .delete: return String(localized: "Move selected left-only or right-only files to the Trash")
+        case .refresh: return String(localized: "Rescan both folders from disk")
         }
     }
 }

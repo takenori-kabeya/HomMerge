@@ -15,6 +15,7 @@ The name is a portmanteau of **"Homage"** and **"Merge,"** chosen to express dee
 - Select two items in Finder and start comparison via the Services menu
 - Support for UTF-8 and Shift_JIS
 - Support for CR, CRLF, and LF line endings
+- UI languages: English and Japanese
 
 ## Requirements
 
@@ -106,6 +107,7 @@ This project is unaffiliated with the official WinMerge project.
 - Finder で2項目を選び、サービスメニューから比較を開始
 - UTF-8/Shift_JISのサポート
 - CR/CRLF/LFの改行コードサポート
+- UI言語: 英語 / 日本語
 
 ## 必要環境
 

@@ -291,20 +291,24 @@ final class SessionRegistry {
 
         let dirtyWindowCount = windowsWithUnsavedFileChanges
         let alert = NSAlert()
-        alert.messageText = "Discard unsaved changes?"
+        alert.messageText = String(localized: "Discard unsaved changes?")
         switch (dirtyTabCount, dirtyWindowCount) {
         case (1, 1):
-            alert.informativeText = "You have a tab with unsaved file compare changes."
+            alert.informativeText = String(
+                localized: "You have a tab with unsaved file compare changes."
+            )
         case (_, 1):
-            alert.informativeText =
-                "You have \(dirtyTabCount) tabs with unsaved file compare changes."
+            alert.informativeText = String(
+                localized: "You have \(dirtyTabCount) tabs with unsaved file compare changes."
+            )
         default:
-            alert.informativeText =
-                "You have \(dirtyTabCount) tabs with unsaved file compare changes across \(dirtyWindowCount) windows."
+            alert.informativeText = String(
+                localized: "You have \(dirtyTabCount) tabs with unsaved file compare changes across \(dirtyWindowCount) windows."
+            )
         }
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Discard")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Discard"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
         return alert.runModal() == .alertFirstButtonReturn ? .terminateNow : .terminateCancel
     }
 
