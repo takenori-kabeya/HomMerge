@@ -21,7 +21,8 @@ struct SettingsView: View {
 
                 Picker("Tab Width", selection: tabWidthSelection) {
                     ForEach(EditorPreferences.allowedTabWidths, id: \.self) { width in
-                        Text("\(width) spaces").tag(width)
+                        Text("\(width) spaces")
+                            .tag(width)
                     }
                 }
             } header: {

@@ -3,6 +3,7 @@ options:
   bundleIdPrefix: jp.cabinetwork
   deploymentTarget:
     macOS: "14.0"
+  developmentLanguage: en
   createIntermediateGroups: true
   groupSortPosition: top
   xcodeVersion: "26.6"

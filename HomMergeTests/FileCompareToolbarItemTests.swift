@@ -17,17 +17,27 @@ final class FileCompareToolbarItemTests: XCTestCase {
     }
 
     func testTitlesMatchVisibleToolbarLabels() {
-        XCTAssertEqual(FileCompareToolbarItem.copyRight.title, "Copy →")
-        XCTAssertEqual(FileCompareToolbarItem.copyLeft.title, "← Copy")
-        XCTAssertEqual(FileCompareToolbarItem.copyRightAndNext.title, "Copy → and Next")
-        XCTAssertEqual(FileCompareToolbarItem.copyLeftAndNext.title, "← Copy and Next")
-        XCTAssertEqual(FileCompareToolbarItem.refresh.title, "Refresh")
-        XCTAssertEqual(FileCompareToolbarItem.firstDiff.title, "First Diff")
-        XCTAssertEqual(FileCompareToolbarItem.previousDiff.title, "Previous Diff")
-        XCTAssertEqual(FileCompareToolbarItem.currentDiff.title, "Current Diff")
-        XCTAssertEqual(FileCompareToolbarItem.nearestDiff.title, "Nearest Diff")
-        XCTAssertEqual(FileCompareToolbarItem.nextDiff.title, "Next Diff")
-        XCTAssertEqual(FileCompareToolbarItem.lastDiff.title, "Last Diff")
+        let appBundle = Bundle(for: AppViewModel.self)
+        XCTAssertEqual(FileCompareToolbarItem.copyRight.title, String(localized: "Copy →", bundle: appBundle))
+        XCTAssertEqual(FileCompareToolbarItem.copyLeft.title, String(localized: "← Copy", bundle: appBundle))
+        XCTAssertEqual(
+            FileCompareToolbarItem.copyRightAndNext.title,
+            String(localized: "Copy → and Next", bundle: appBundle)
+        )
+        XCTAssertEqual(
+            FileCompareToolbarItem.copyLeftAndNext.title,
+            String(localized: "← Copy and Next", bundle: appBundle)
+        )
+        XCTAssertEqual(FileCompareToolbarItem.refresh.title, String(localized: "Refresh", bundle: appBundle))
+        XCTAssertEqual(FileCompareToolbarItem.firstDiff.title, String(localized: "First Diff", bundle: appBundle))
+        XCTAssertEqual(
+            FileCompareToolbarItem.previousDiff.title,
+            String(localized: "Previous Diff", bundle: appBundle)
+        )
+        XCTAssertEqual(FileCompareToolbarItem.currentDiff.title, String(localized: "Current Diff", bundle: appBundle))
+        XCTAssertEqual(FileCompareToolbarItem.nearestDiff.title, String(localized: "Nearest Diff", bundle: appBundle))
+        XCTAssertEqual(FileCompareToolbarItem.nextDiff.title, String(localized: "Next Diff", bundle: appBundle))
+        XCTAssertEqual(FileCompareToolbarItem.lastDiff.title, String(localized: "Last Diff", bundle: appBundle))
     }
 
     func testPreferencesKeyIsStable() {

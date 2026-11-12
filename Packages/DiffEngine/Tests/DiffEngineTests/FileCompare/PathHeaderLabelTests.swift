@@ -4,8 +4,8 @@ import Testing
 
 @Test func pathHeaderLabelUsesPlaceholdersWhenPathsMissing() {
     let bothMissing = PathHeaderLabel.pair(leftPath: nil, rightPath: nil, maxCharactersPerSide: 40)
-    #expect(bothMissing.left == "Left")
-    #expect(bothMissing.right == "Right")
+    #expect(bothMissing.left == String(localized: "Left", bundle: .module))
+    #expect(bothMissing.right == String(localized: "Right", bundle: .module))
 
     let leftOnly = PathHeaderLabel.pair(
         leftPath: "/tmp/a.txt",
@@ -13,7 +13,7 @@ import Testing
         maxCharactersPerSide: 40
     )
     #expect(leftOnly.left.contains("a.txt"))
-    #expect(leftOnly.right == "Right")
+    #expect(leftOnly.right == String(localized: "Right", bundle: .module))
 }
 
 @Test func pathHeaderLabelShowsSameLabelForIdenticalPaths() {

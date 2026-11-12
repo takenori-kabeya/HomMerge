@@ -243,10 +243,10 @@ struct FolderCompareView: View {
 
     private func statusLabel(for status: FolderEntryStatus) -> String {
         switch status {
-        case .identical: return "Identical"
-        case .different: return "Different"
-        case .leftOnly: return "Left only"
-        case .rightOnly: return "Right only"
+        case .identical: return String(localized: "Identical")
+        case .different: return String(localized: "Different")
+        case .leftOnly: return String(localized: "Left only")
+        case .rightOnly: return String(localized: "Right only")
         }
     }
 

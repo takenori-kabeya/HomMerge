@@ -59,7 +59,7 @@ private struct EULARTFView: NSViewRepresentable {
         if let attributed = Self.loadAttributedString() {
             textView.textStorage?.setAttributedString(attributed)
         } else {
-            textView.string = "Could not load EULA.rtf."
+            textView.string = String(localized: "Could not load EULA.rtf.")
         }
 
         Self.applyAdaptiveColors(to: textView)

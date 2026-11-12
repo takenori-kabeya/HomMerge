@@ -30,11 +30,11 @@ public enum FolderFileCopy {
         public var errorDescription: String? {
             switch self {
             case .sourceMissing:
-                return "The source file could not be found."
+                return String(localized: "The source file could not be found.", bundle: .module)
             case .sourceNotFile:
-                return "The source path is not a file."
+                return String(localized: "The source path is not a file.", bundle: .module)
             case .destinationExists:
-                return "The destination file already exists."
+                return String(localized: "The destination file already exists.", bundle: .module)
             }
         }
     }

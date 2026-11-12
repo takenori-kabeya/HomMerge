@@ -10,7 +10,7 @@
 - [x] Undo merge (Copy Left/Right)
 - [x] Direct in-view editing
 - [x] Undo text editing
-- [ ] UI localization (multi-language support)
+- [x] UI localization (app UI and Info.plist; English + Japanese)
 - [ ] File filtering (ignore list)
 - [x] Comparison of two files selected in Finder
 - [x] File copying within the folder comparison pane
@@ -42,7 +42,7 @@
 - [x] マージのUndo（右へコピー、左へコピー）
 - [x] 画面での直接編集
 - [x] 直接編集のUndo
-- [ ] UIの多言語対応
+- [x] UIの多言語対応（アプリUI・Info.plist、英語＋日本語）
 - [ ] ファイルのフィルタ（無視リスト）
 - [x] Finderで選んだ2つのファイルの比較
 - [x] フォルダ比較ペインでのファイルのコピー

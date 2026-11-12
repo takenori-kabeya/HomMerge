@@ -8,7 +8,7 @@ public enum FolderFileTrash {
         public var errorDescription: String? {
             switch self {
             case .missing:
-                return "The file could not be found."
+                return String(localized: "The file could not be found.", bundle: .module)
             }
         }
     }

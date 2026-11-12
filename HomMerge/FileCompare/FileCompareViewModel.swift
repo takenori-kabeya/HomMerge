@@ -55,12 +55,14 @@ final class FileCompareViewModel {
     }
 
     var leftTitle: String {
-        let name = state.leftPath.map { URL(fileURLWithPath: $0).lastPathComponent } ?? "Left"
+        let name = state.leftPath.map { URL(fileURLWithPath: $0).lastPathComponent }
+            ?? String(localized: "Left")
         return state.isLeftDirty ? "\(name) •" : name
     }
 
     var rightTitle: String {
-        let name = state.rightPath.map { URL(fileURLWithPath: $0).lastPathComponent } ?? "Right"
+        let name = state.rightPath.map { URL(fileURLWithPath: $0).lastPathComponent }
+            ?? String(localized: "Right")
         return state.isRightDirty ? "\(name) •" : name
     }
 
@@ -81,31 +83,37 @@ final class FileCompareViewModel {
             return lastSaveError
         }
         if let leftError = state.leftError {
-            return "Left: \(describe(leftError))"
+            return String(localized: "Left: \(describe(leftError))")
         }
         if let rightError = state.rightError {
-            return "Right: \(describe(rightError))"
+            return String(localized: "Right: \(describe(rightError))")
         }
         guard state.canCompare else {
-            return "Open files on both sides to compare"
+            return String(localized: "Open files on both sides to compare")
         }
 
         var parts: [String] = []
         if state.hasChanges {
             let hunks = state.navigator.hunkCount
             if let index = state.navigator.currentIndex {
-                parts.append("\(hunks) difference\(hunks == 1 ? "" : "s") — \(index + 1) of \(hunks)")
+                if hunks == 1 {
+                    parts.append(String(localized: "\(hunks) difference — \(index + 1) of \(hunks)"))
+                } else {
+                    parts.append(String(localized: "\(hunks) differences — \(index + 1) of \(hunks)"))
+                }
+            } else if hunks == 1 {
+                parts.append(String(localized: "\(hunks) difference"))
             } else {
-                parts.append("\(hunks) difference\(hunks == 1 ? "" : "s")")
+                parts.append(String(localized: "\(hunks) differences"))
             }
         } else {
-            parts.append("Files are identical")
+            parts.append(String(localized: "Files are identical"))
         }
         if state.hasUnsavedChanges {
             var dirty: [String] = []
-            if state.isLeftDirty { dirty.append("left") }
-            if state.isRightDirty { dirty.append("right") }
-            parts.append("unsaved: \(dirty.joined(separator: ", "))")
+            if state.isLeftDirty { dirty.append(String(localized: "left")) }
+            if state.isRightDirty { dirty.append(String(localized: "right")) }
+            parts.append(String(localized: "unsaved: \(dirty.joined(separator: ", "))"))
         }
         return parts.joined(separator: " · ")
     }
@@ -191,11 +199,11 @@ final class FileCompareViewModel {
     func load(url: URL, side: DiffPaneSide) {
         switch side {
         case .left:
-            if state.isLeftDirty, !confirmDiscard(sideName: "left") {
+            if state.isLeftDirty, !confirmDiscard(sideName: String(localized: "left")) {
                 return
             }
         case .right:
-            if state.isRightDirty, !confirmDiscard(sideName: "right") {
+            if state.isRightDirty, !confirmDiscard(sideName: String(localized: "right")) {
                 return
             }
         }
@@ -233,12 +241,12 @@ final class FileCompareViewModel {
     }
 
     func openLeftFile() {
-        guard let url = chooseFile(title: "Open Left File") else { return }
+        guard let url = chooseFile(title: String(localized: "Open Left File")) else { return }
         load(url: url, side: .left)
     }
 
     func openRightFile() {
-        guard let url = chooseFile(title: "Open Right File") else { return }
+        guard let url = chooseFile(title: String(localized: "Open Right File")) else { return }
         load(url: url, side: .right)
     }
 
@@ -284,19 +292,19 @@ final class FileCompareViewModel {
     }
 
     func copyHunkToRight() {
-        _ = performMergeCopy(actionName: "Copy Difference to Right", targetSide: .right) {
+        _ = performMergeCopy(actionName: String(localized: "Copy Difference to Right"), targetSide: .right) {
             state.copyCurrentHunk(to: .right)
         }
     }
 
     func copyHunkToLeft() {
-        _ = performMergeCopy(actionName: "Copy Difference to Left", targetSide: .left) {
+        _ = performMergeCopy(actionName: String(localized: "Copy Difference to Left"), targetSide: .left) {
             state.copyCurrentHunk(to: .left)
         }
     }
 
     func copyHunkToRightAndNext() {
-        let didCopy = performMergeCopy(actionName: "Copy Difference to Right", targetSide: .right) {
+        let didCopy = performMergeCopy(actionName: String(localized: "Copy Difference to Right"), targetSide: .right) {
             state.copyCurrentHunk(to: .right)
         }
         if didCopy {
@@ -305,7 +313,7 @@ final class FileCompareViewModel {
     }
 
     func copyHunkToLeftAndNext() {
-        let didCopy = performMergeCopy(actionName: "Copy Difference to Left", targetSide: .left) {
+        let didCopy = performMergeCopy(actionName: String(localized: "Copy Difference to Left"), targetSide: .left) {
             state.copyCurrentHunk(to: .left)
         }
         if didCopy {
@@ -419,7 +427,7 @@ final class FileCompareViewModel {
         lastSaveError = nil
         let before = state.makeEditSnapshot()
         state.applyEditedText(fileText, side: side)
-        registerMergeUndo(restoring: before, actionName: "Edit")
+        registerMergeUndo(restoring: before, actionName: String(localized: "Edit"))
     }
 
     func clearPendingCaretRemap() {
@@ -507,7 +515,11 @@ final class FileCompareViewModel {
         if let path {
             url = URL(fileURLWithPath: path)
         } else {
-            guard let chosen = chooseSaveFile(title: side == .left ? "Save Left File" : "Save Right File") else {
+            guard let chosen = chooseSaveFile(
+                title: side == .left
+                    ? String(localized: "Save Left File")
+                    : String(localized: "Save Right File")
+            ) else {
                 return
             }
             url = chosen
@@ -528,7 +540,8 @@ final class FileCompareViewModel {
                 state.markRightSaved()
             }
         } catch {
-            lastSaveError = "Failed to save \(side == .left ? "left" : "right") file"
+            let sideLabel = side == .left ? String(localized: "left") : String(localized: "right")
+            lastSaveError = String(localized: "Failed to save \(sideLabel) file")
         }
     }
 
@@ -579,26 +592,34 @@ final class FileCompareViewModel {
 
     private func confirmDiscard(sideName: String) -> Bool {
         let alert = NSAlert()
-        alert.messageText = "Discard unsaved \(sideName) changes?"
-        alert.informativeText = "The \(sideName) file has unsaved changes."
+        alert.messageText = String(localized: "Discard unsaved \(sideName) changes?")
+        alert.informativeText = String(localized: "The \(sideName) file has unsaved changes.")
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Discard")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Discard"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
         return alert.runModal() == .alertFirstButtonReturn
     }
 
     private func confirmDiscardRefresh() -> Bool {
         var dirtySides: [String] = []
-        if state.isLeftDirty { dirtySides.append("left") }
-        if state.isRightDirty { dirtySides.append("right") }
+        if state.isLeftDirty { dirtySides.append(String(localized: "left")) }
+        if state.isRightDirty { dirtySides.append(String(localized: "right")) }
+        let joined = dirtySides.joined(separator: " \(String(localized: "and")) ")
 
         let alert = NSAlert()
-        alert.messageText = "Discard unsaved changes?"
-        alert.informativeText =
-            "Refreshing will discard unsaved changes to the \(dirtySides.joined(separator: " and ")) file\(dirtySides.count == 1 ? "" : "s")."
+        alert.messageText = String(localized: "Discard unsaved changes?")
+        if dirtySides.count == 1 {
+            alert.informativeText = String(
+                localized: "Refreshing will discard unsaved changes to the \(joined) file."
+            )
+        } else {
+            alert.informativeText = String(
+                localized: "Refreshing will discard unsaved changes to the \(joined) files."
+            )
+        }
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Discard")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Discard"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
         return alert.runModal() == .alertFirstButtonReturn
     }
 
@@ -636,11 +657,11 @@ final class FileCompareViewModel {
     private func describe(_ error: FileLoadError) -> String {
         switch error {
         case .binary:
-            return "binary file (cannot compare)"
+            return String(localized: "binary file (cannot compare)")
         case .notUTF8:
-            return "not valid UTF-8 or Shift_JIS text"
+            return String(localized: "not valid UTF-8 or Shift_JIS text")
         case .unreadable:
-            return "unreadable"
+            return String(localized: "unreadable")
         }
     }
 }

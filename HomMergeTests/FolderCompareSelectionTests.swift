@@ -107,11 +107,17 @@ final class FolderCompareSelectionTests: XCTestCase {
 
         let options = FolderCompareSelection.crossFileCompareOptions(entries: [fileB, fileA])
         XCTAssertEqual(options.count, 2)
-        XCTAssertEqual(options[0].title, "Compare Left: a.txt – Right: b.txt")
+        XCTAssertEqual(
+            options[0].title,
+            String(localized: "Compare Left: \("a.txt") – Right: \("b.txt")")
+        )
         XCTAssertTrue(options[0].isEnabled)
         XCTAssertEqual(options[0].leftURL, fileA.leftURL)
         XCTAssertEqual(options[0].rightURL, fileB.rightURL)
-        XCTAssertEqual(options[1].title, "Compare Left: b.txt – Right: a.txt")
+        XCTAssertEqual(
+            options[1].title,
+            String(localized: "Compare Left: \("b.txt") – Right: \("a.txt")")
+        )
         XCTAssertTrue(options[1].isEnabled)
         XCTAssertEqual(options[1].leftURL, fileB.leftURL)
         XCTAssertEqual(options[1].rightURL, fileA.rightURL)
@@ -123,11 +129,17 @@ final class FolderCompareSelectionTests: XCTestCase {
 
         let options = FolderCompareSelection.crossFileCompareOptions(entries: [rightOnly, leftOnly])
         XCTAssertEqual(options.count, 2)
-        XCTAssertEqual(options[0].title, "Compare Left: a.txt – Right: b.txt")
+        XCTAssertEqual(
+            options[0].title,
+            String(localized: "Compare Left: \("a.txt") – Right: \("b.txt")")
+        )
         XCTAssertTrue(options[0].isEnabled)
         XCTAssertEqual(options[0].leftURL, leftOnly.leftURL)
         XCTAssertEqual(options[0].rightURL, rightOnly.rightURL)
-        XCTAssertEqual(options[1].title, "Compare Left: b.txt – Right: a.txt")
+        XCTAssertEqual(
+            options[1].title,
+            String(localized: "Compare Left: \("b.txt") – Right: \("a.txt")")
+        )
         XCTAssertFalse(options[1].isEnabled)
         XCTAssertNil(options[1].leftURL)
         XCTAssertNil(options[1].rightURL)
@@ -162,8 +174,14 @@ final class FolderCompareSelectionTests: XCTestCase {
         let second = makeEntry(path: "dir2/same.txt", kind: .file, status: .different, left: true, right: true)
 
         let options = FolderCompareSelection.crossFileCompareOptions(entries: [second, first])
-        XCTAssertEqual(options[0].title, "Compare Left: dir1/same.txt – Right: dir2/same.txt")
-        XCTAssertEqual(options[1].title, "Compare Left: dir2/same.txt – Right: dir1/same.txt")
+        XCTAssertEqual(
+            options[0].title,
+            String(localized: "Compare Left: \("dir1/same.txt") – Right: \("dir2/same.txt")")
+        )
+        XCTAssertEqual(
+            options[1].title,
+            String(localized: "Compare Left: \("dir2/same.txt") – Right: \("dir1/same.txt")")
+        )
     }
 }
 

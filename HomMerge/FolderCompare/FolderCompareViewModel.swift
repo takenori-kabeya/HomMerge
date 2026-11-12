@@ -15,15 +15,17 @@ final class FolderCompareViewModel {
     private(set) var state = FolderCompareState()
     private(set) var leftPath: String?
     private(set) var rightPath: String?
-    private(set) var statusText = "Open two folders to compare"
+    private(set) var statusText = String(localized: "Open two folders to compare")
     var selectedEntryIDs: Set<FolderEntry.ID> = []
 
     var leftTitle: String {
-        leftPath.map { URL(fileURLWithPath: $0).lastPathComponent } ?? "Left Folder"
+        leftPath.map { URL(fileURLWithPath: $0).lastPathComponent }
+            ?? String(localized: "Left Folder")
     }
 
     var rightTitle: String {
-        rightPath.map { URL(fileURLWithPath: $0).lastPathComponent } ?? "Right Folder"
+        rightPath.map { URL(fileURLWithPath: $0).lastPathComponent }
+            ?? String(localized: "Right Folder")
     }
 
     var excludeHidden: Bool {
@@ -181,7 +183,7 @@ final class FolderCompareViewModel {
                     destinationSide: destinationSide
                 )
             } catch {
-                presentCopyError(error, messageText: "Could not copy folder")
+                presentCopyError(error, messageText: String(localized: "Could not copy folder"))
                 return
             }
         case .mixed(let directories, let files):
@@ -191,7 +193,7 @@ final class FolderCompareViewModel {
                     destinationSide: destinationSide
                 )
             } catch {
-                presentCopyError(error, messageText: "Could not copy folder")
+                presentCopyError(error, messageText: String(localized: "Could not copy folder"))
                 return
             }
             if shouldContinue {
@@ -241,7 +243,7 @@ final class FolderCompareViewModel {
             )
             return true
         } catch {
-            presentCopyError(error, messageText: "Could not copy file")
+            presentCopyError(error, messageText: String(localized: "Could not copy file"))
             return false
         }
     }
@@ -291,12 +293,14 @@ final class FolderCompareViewModel {
 
     private func confirmOverwriteChoice(fileName: String) -> OverwriteChoice {
         let alert = NSAlert()
-        alert.messageText = "Replace existing file?"
-        alert.informativeText = "\"\(fileName)\" already exists. Replace this file?"
+        alert.messageText = String(localized: "Replace existing file?")
+        alert.informativeText = String(
+            localized: "\"\(fileName)\" already exists. Replace this file?"
+        )
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Yes")
-        alert.addButton(withTitle: "No")
-        alert.addButton(withTitle: "Stop")
+        alert.addButton(withTitle: String(localized: "Yes"))
+        alert.addButton(withTitle: String(localized: "No"))
+        alert.addButton(withTitle: String(localized: "Stop"))
 
         switch alert.runModal() {
         case .alertFirstButtonReturn:
@@ -310,11 +314,15 @@ final class FolderCompareViewModel {
 
     private func confirmOverwrite(files: [String]) -> Bool {
         let alert = NSAlert()
-        alert.messageText = "Replace files with differences?"
-        alert.informativeText = "\(files.count) file\(files.count == 1 ? "" : "s") will be overwritten."
+        alert.messageText = String(localized: "Replace files with differences?")
+        if files.count == 1 {
+            alert.informativeText = String(localized: "\(files.count) file will be overwritten.")
+        } else {
+            alert.informativeText = String(localized: "\(files.count) files will be overwritten.")
+        }
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Replace")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Replace"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
 
         let scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: 400, height: 200))
         scrollView.hasVerticalScroller = true
@@ -344,18 +352,20 @@ final class FolderCompareViewModel {
     private func confirmMoveToTrash(relativePaths: [String]) -> Bool {
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Move to Trash")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Move to Trash"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
 
         if relativePaths.count == 1 {
             let fileName = URL(fileURLWithPath: relativePaths[0]).lastPathComponent
-            alert.messageText = "Move to Trash?"
-            alert.informativeText = "\"\(fileName)\" will be moved to the Trash."
+            alert.messageText = String(localized: "Move to Trash?")
+            alert.informativeText = String(
+                localized: "\"\(fileName)\" will be moved to the Trash."
+            )
         } else {
-            alert.messageText = "Move files to the Trash?"
-            alert.informativeText =
-                "\(relativePaths.count) file\(relativePaths.count == 1 ? "" : "s") will be moved to the Trash."
-
+            alert.messageText = String(localized: "Move files to the Trash?")
+            alert.informativeText = String(
+                localized: "\(relativePaths.count) files will be moved to the Trash."
+            )
             let scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: 400, height: 200))
             scrollView.hasVerticalScroller = true
             scrollView.borderType = .bezelBorder
@@ -383,7 +393,7 @@ final class FolderCompareViewModel {
     }
 
     private func presentDeleteError(_ error: Error) {
-        presentCopyError(error, messageText: "Could not move file to the Trash")
+        presentCopyError(error, messageText: String(localized: "Could not move file to the Trash"))
     }
 
     private func presentCopyError(_ error: Error, messageText: String) {
@@ -391,14 +401,14 @@ final class FolderCompareViewModel {
         alert.messageText = messageText
         alert.informativeText = error.localizedDescription
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: String(localized: "OK"))
         alert.runModal()
     }
 
     private func runCompare(preservingSelectionIDs: Set<FolderEntry.ID>?) {
         selectedEntryIDs = []
         guard let leftPath, let rightPath else {
-            statusText = "Open two folders to compare"
+            statusText = String(localized: "Open two folders to compare")
             state.clear()
             return
         }
@@ -420,22 +430,28 @@ final class FolderCompareViewModel {
             refreshStatus()
         } catch {
             state.clear()
-            statusText = "Failed to compare folders"
+            statusText = String(localized: "Failed to compare folders")
         }
     }
 
     private func refreshStatus() {
         guard state.hasResult else {
-            statusText = "Open two folders to compare"
+            statusText = String(localized: "Open two folders to compare")
             return
         }
         let flat = state.result?.flatEntries ?? []
         let files = flat.filter { $0.kind == .file }
         let different = files.filter { $0.status != .identical }.count
         let identical = files.count - different
-        statusText =
-            "\(files.count) files — \(different) different, \(identical) identical"
-            + (showOnlyDifferences ? " (filtered)" : "")
+        if showOnlyDifferences {
+            statusText = String(
+                localized: "\(files.count) files — \(different) different, \(identical) identical (filtered)"
+            )
+        } else {
+            statusText = String(
+                localized: "\(files.count) files — \(different) different, \(identical) identical"
+            )
+        }
     }
 
     private func findEntry(id: FolderEntry.ID, in entries: [FolderEntry]) -> FolderEntry? {

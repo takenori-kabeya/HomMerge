@@ -139,15 +139,19 @@ final class AppViewModel {
         }
 
         let alert = NSAlert()
-        alert.messageText = "Discard unsaved changes?"
+        alert.messageText = String(localized: "Discard unsaved changes?")
         if dirtyCount == 1 {
-            alert.informativeText = "This window has a tab with unsaved file compare changes."
+            alert.informativeText = String(
+                localized: "This window has a tab with unsaved file compare changes."
+            )
         } else {
-            alert.informativeText = "This window has \(dirtyCount) tabs with unsaved file compare changes."
+            alert.informativeText = String(
+                localized: "This window has \(dirtyCount) tabs with unsaved file compare changes."
+            )
         }
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Discard")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Discard"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
         return alert.runModal() == .alertFirstButtonReturn
     }
 

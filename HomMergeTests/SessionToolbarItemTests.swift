@@ -15,11 +15,12 @@ final class SessionToolbarItemTests: XCTestCase {
     }
 
     func testSessionTitlesMatchVisibleToolbarLabels() {
-        XCTAssertEqual(SessionToolbarItem.openLeft.title, "Open Left…")
-        XCTAssertEqual(SessionToolbarItem.openRight.title, "Open Right…")
-        XCTAssertEqual(SessionToolbarItem.compare.title, "Compare")
-        XCTAssertEqual(SessionToolbarItem.saveLeft.title, "Save Left")
-        XCTAssertEqual(SessionToolbarItem.saveRight.title, "Save Right")
+        let appBundle = Bundle(for: AppViewModel.self)
+        XCTAssertEqual(SessionToolbarItem.openLeft.title, String(localized: "Open Left…", bundle: appBundle))
+        XCTAssertEqual(SessionToolbarItem.openRight.title, String(localized: "Open Right…", bundle: appBundle))
+        XCTAssertEqual(SessionToolbarItem.compare.title, String(localized: "Compare", bundle: appBundle))
+        XCTAssertEqual(SessionToolbarItem.saveLeft.title, String(localized: "Save Left", bundle: appBundle))
+        XCTAssertEqual(SessionToolbarItem.saveRight.title, String(localized: "Save Right", bundle: appBundle))
     }
 
     func testFolderCompareSystemImagesMatchExpectedSFSymbols() {
@@ -33,19 +34,35 @@ final class SessionToolbarItemTests: XCTestCase {
     }
 
     func testFolderCompareTitlesAndHelp() {
-        XCTAssertEqual(FolderCompareToolbarItem.compareSelectedFiles.title, "Compare Selected Files")
-        XCTAssertEqual(FolderCompareToolbarItem.compareSelectedFiles.help, "Compare Selected Files")
-        XCTAssertEqual(FolderCompareToolbarItem.copyRight.title, "Copy →")
-        XCTAssertEqual(FolderCompareToolbarItem.copyRight.help, "Copy selected item to the right folder")
-        XCTAssertEqual(FolderCompareToolbarItem.copyLeft.title, "← Copy")
-        XCTAssertEqual(FolderCompareToolbarItem.copyLeft.help, "Copy selected item to the left folder")
-        XCTAssertEqual(FolderCompareToolbarItem.delete.title, "Delete")
+        let appBundle = Bundle(for: AppViewModel.self)
+        XCTAssertEqual(
+            FolderCompareToolbarItem.compareSelectedFiles.title,
+            String(localized: "Compare Selected Files", bundle: appBundle)
+        )
+        XCTAssertEqual(
+            FolderCompareToolbarItem.compareSelectedFiles.help,
+            String(localized: "Compare Selected Files", bundle: appBundle)
+        )
+        XCTAssertEqual(FolderCompareToolbarItem.copyRight.title, String(localized: "Copy →", bundle: appBundle))
+        XCTAssertEqual(
+            FolderCompareToolbarItem.copyRight.help,
+            String(localized: "Copy selected item to the right folder", bundle: appBundle)
+        )
+        XCTAssertEqual(FolderCompareToolbarItem.copyLeft.title, String(localized: "← Copy", bundle: appBundle))
+        XCTAssertEqual(
+            FolderCompareToolbarItem.copyLeft.help,
+            String(localized: "Copy selected item to the left folder", bundle: appBundle)
+        )
+        XCTAssertEqual(FolderCompareToolbarItem.delete.title, String(localized: "Delete", bundle: appBundle))
         XCTAssertEqual(FolderCompareToolbarItem.delete.systemImages, ["trash"])
         XCTAssertEqual(
             FolderCompareToolbarItem.delete.help,
-            "Move selected left-only or right-only files to the Trash"
+            String(localized: "Move selected left-only or right-only files to the Trash", bundle: appBundle)
         )
-        XCTAssertEqual(FolderCompareToolbarItem.refresh.title, "Refresh")
-        XCTAssertEqual(FolderCompareToolbarItem.refresh.help, "Rescan both folders from disk")
+        XCTAssertEqual(FolderCompareToolbarItem.refresh.title, String(localized: "Refresh", bundle: appBundle))
+        XCTAssertEqual(
+            FolderCompareToolbarItem.refresh.help,
+            String(localized: "Rescan both folders from disk", bundle: appBundle)
+        )
     }
 }
