@@ -137,7 +137,15 @@ tmbootpicker.efi
 
 LocalScripts/
 
+# Local Apple Developer Team ID (see Configs/Local.xcconfig.example)
+Configs/Local.xcconfig
+
+
 ## XcodeGen
 
 *.xcodeproj/
 *.pbxproj
+
+## Backup Files
+
+*~

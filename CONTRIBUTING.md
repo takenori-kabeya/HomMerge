@@ -17,7 +17,7 @@ Long-lived branches such as `develop` or `release/*` are not used.
 1. Fork or clone the repository.
 2. Install required tools (refer to the environment requirements in [README.md](README.md)).
 3. Generate the Xcode project using `xcodegen generate`.
-4. Configure **your own Development Team** in Xcode (the repository does not include a Team ID).
+4. For signed builds, copy `Configs/Local.xcconfig.example` to `Configs/Local.xcconfig`, set your `DEVELOPMENT_TEAM`, then run `xcodegen generate` again (do not commit `Local.xcconfig`).
 
 ## Development Workflow
 
@@ -74,7 +74,7 @@ Prefixes:
 - **Write tests first for new features** (or include tests in the PR).
 - Do not implement special-case code just to make specific tests pass; implement according to the specifications.
 - If a test fails, do not simply loosen the test to match the implementation; explain your interpretation of the specifications in the PR.
-- Do not include personal `DEVELOPMENT_TEAM` settings, certificates, API keys, or personal passwords in changes intended for public release.
+- Do not include personal `DEVELOPMENT_TEAM` settings (including `Configs/Local.xcconfig`), certificates, API keys, or personal passwords in changes intended for public release.
 
 ## Pull Requests
 
@@ -115,7 +115,7 @@ For major specification changes, please share your proposed approach in an Issue
 1. リポジトリを fork するか clone する
 2. 依存ツールを入れる（[README.md](README.md) の必要環境を参照）
 3. `xcodegen generate` で Xcode プロジェクトを生成する
-4. Xcode で **自分の Development Team** を設定する（リポジトリに Team ID は含まれていない）
+4. 署名付きビルドでは `Configs/Local.xcconfig.example` を `Configs/Local.xcconfig` にコピーし、`DEVELOPMENT_TEAM` を設定してから再度 `xcodegen generate` する（`Local.xcconfig` はコミットしない）
 
 ## 開発の流れ
 
@@ -172,7 +172,7 @@ xcodebuild -scheme HomMerge -destination 'platform=macOS' test
 - **新機能はテストを先に書く**（または PR にテストを含める）
 - 特定のテストだけ通すための特例実装はしない。仕様に沿った実装にする
 - テストが落ちる場合、安易にテスト側を「実装に合わせて」緩めない。仕様の解釈を PR で説明する
-- 公開用の変更に、自分専用の `DEVELOPMENT_TEAM`・証明書・API キー・個人パスを含めない
+- 公開用の変更に、自分専用の `DEVELOPMENT_TEAM`（`Configs/Local.xcconfig` 含む）・証明書・API キー・個人パスを含めない
 
 ## Pull Request
 

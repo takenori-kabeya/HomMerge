@@ -12,6 +12,11 @@ packages:
   DiffEngine:
     path: Packages/DiffEngine
 
+# Local Team ID via Configs/Local.xcconfig (gitignored). See Configs/Local.xcconfig.example.
+configFiles:
+  Debug: Configs/Signing.xcconfig
+  Release: Configs/Signing.xcconfig
+
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -28,6 +33,9 @@ targets:
       - path: HomMerge
     dependencies:
       - package: DiffEngine
+    configFiles:
+      Debug: Configs/Signing.xcconfig
+      Release: Configs/Signing.xcconfig
     preBuildScripts:
       - name: Generate EULA.rtf
         basedOnDependencyAnalysis: false
@@ -77,6 +85,9 @@ targets:
       - path: HomMergeTests
     dependencies:
       - target: HomMerge
+    configFiles:
+      Debug: Configs/Signing.xcconfig
+      Release: Configs/Signing.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: jp.cabinetwork.HomMergeTests
@@ -94,6 +105,9 @@ targets:
       - path: HomMergeUITests
     dependencies:
       - target: HomMerge
+    configFiles:
+      Debug: Configs/Signing.xcconfig
+      Release: Configs/Signing.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: jp.cabinetwork.HomMergeUITests

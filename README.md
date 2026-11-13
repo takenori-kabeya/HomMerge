@@ -68,11 +68,15 @@ open HomMerge.xcodeproj
 
 ### Code Signing (Development Team)
 
-The Apple Developer **Team ID is not included** in the public repository. Please configure the following in Xcode upon your first setup:
+The Apple Developer **Team ID is not included** in the public repository. For signed Debug/Release builds (including Archive):
 
-1. Open the `HomMerge`, `HomMergeTests`, and `HomMergeUITests` targets.
-2. Select your **Team** under **Signing & Capabilities**.
-3. (Optional) Set `DEVELOPMENT_TEAM` in `project.yml` locally and run `xcodegen generate`. Do not commit this change.
+```bash
+cp Configs/Local.xcconfig.example Configs/Local.xcconfig
+# Edit Configs/Local.xcconfig and set DEVELOPMENT_TEAM to your Team ID
+xcodegen generate
+```
+
+`Configs/Local.xcconfig` is gitignored. Do not commit it. Without that file, the project still generates and builds, but code signing has no Team ID.
 
 ## Branches and Releases
 
@@ -160,11 +164,15 @@ open HomMerge.xcodeproj
 
 ### コード署名（Development Team）
 
-公開リポジトリには Apple Developer の **Team ID を含めていません**。初回は Xcode で次を設定してください。
+公開リポジトリには Apple Developer の **Team ID を含めていません**。署名付きの Debug/Release ビルド（Archive 含む）では次を行ってください。
 
-1. `HomMerge` / `HomMergeTests` / `HomMergeUITests` ターゲットを開く
-2. **Signing & Capabilities** で自分の **Team** を選ぶ
-3. （任意）ローカルだけで `project.yml` の `DEVELOPMENT_TEAM` を設定し、`xcodegen generate` する。その変更はコミットしない
+```bash
+cp Configs/Local.xcconfig.example Configs/Local.xcconfig
+# Configs/Local.xcconfig を編集し、DEVELOPMENT_TEAM に自分の Team ID を設定
+xcodegen generate
+```
+
+`Configs/Local.xcconfig` は gitignore 済みです。コミットしないでください。このファイルが無くてもプロジェクト生成とビルドはできますが、Team ID なしの署名状態になります。
 
 ## ブランチとリリース
 
