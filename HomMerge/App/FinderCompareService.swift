@@ -16,6 +16,14 @@ enum FinderCompareService {
     }
 
     static func comparisonRequest(fromFileURLs urls: [URL]) -> LaunchComparisonRequest? {
-        LaunchArgumentsParser.parseOpenFiles(urls.map(\.path))
+        guard urls.count == 2 else {
+            return nil
+        }
+        // Keep the original file URLs (do not rebuild from path strings) so
+        // security-scoped access from Services / pasteboard is preserved.
+        return LaunchComparisonRequest(
+            left: urls[0].standardizedFileURL,
+            right: urls[1].standardizedFileURL
+        )
     }
 }

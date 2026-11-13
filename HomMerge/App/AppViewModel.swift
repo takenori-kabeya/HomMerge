@@ -40,8 +40,14 @@ final class AppViewModel {
             restoredTabs = snapshot.tabs.map { tabSnapshot in
                 let tab = CompareTab()
                 tab.session.restorePaths(
-                    left: tabSnapshot.leftPath.map { URL(fileURLWithPath: $0) },
-                    right: tabSnapshot.rightPath.map { URL(fileURLWithPath: $0) }
+                    left: Self.resolveSessionURL(
+                        path: tabSnapshot.leftPath,
+                        bookmark: tabSnapshot.leftBookmark
+                    ),
+                    right: Self.resolveSessionURL(
+                        path: tabSnapshot.rightPath,
+                        bookmark: tabSnapshot.rightBookmark
+                    )
                 )
                 return tab
             }
@@ -59,10 +65,20 @@ final class AppViewModel {
             tabs: tabs.map { tab in
                 TabSnapshot(
                     leftPath: tab.session.leftURL?.path,
-                    rightPath: tab.session.rightURL?.path
+                    rightPath: tab.session.rightURL?.path,
+                    leftBookmark: tab.session.leftURL.flatMap(SecurityScopedBookmark.makeBookmark),
+                    rightBookmark: tab.session.rightURL.flatMap(SecurityScopedBookmark.makeBookmark)
                 )
             }
         )
+    }
+
+    /// Prefers a security-scoped bookmark; falls back to a plain path URL.
+    private static func resolveSessionURL(path: String?, bookmark: Data?) -> URL? {
+        if let bookmark, let url = SecurityScopedBookmark.resolveBookmark(bookmark) {
+            return url
+        }
+        return path.map { URL(fileURLWithPath: $0) }
     }
 
     var selectedTab: CompareTab? {
