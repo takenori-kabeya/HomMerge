@@ -1,0 +1,3 @@
+// Shared signing settings. Local Team ID is loaded when present.
+// Copy Local.xcconfig.example to Local.xcconfig and set DEVELOPMENT_TEAM.
+#include? "Local.xcconfig"
