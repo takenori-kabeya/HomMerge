@@ -145,3 +145,7 @@ Configs/Local.xcconfig
 
 *.xcodeproj/
 *.pbxproj
+
+## Backup Files
+
+*~
