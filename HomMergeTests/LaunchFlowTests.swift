@@ -77,7 +77,16 @@ final class LaunchFlowTests: XCTestCase {
         XCTAssertTrue(registry.shouldPresentMainWindowForTesting)
     }
 
-    func testResolveWithoutArgumentsLoadsRestoreQueue() {
+    func testResolveWithoutArgumentsAwaitsOpenFilesBeforeRestore() {
+        registry.resolveLaunch(cliArguments: [
+            "/Applications/HomMerge.app/Contents/MacOS/HomMerge",
+        ])
+
+        XCTAssertFalse(registry.isLaunchResolvedForTesting)
+        XCTAssertTrue(registry.isAwaitingEmptyOpenFilesForTesting)
+    }
+
+    func testResolveWithoutArgumentsLoadsRestoreQueueAfterOpenAwait() {
         let front = WindowSnapshot(
             selectedTabIndex: 0,
             tabs: [TabSnapshot(leftPath: "/tmp/front-left", rightPath: "/tmp/front-right")]
@@ -93,12 +102,76 @@ final class LaunchFlowTests: XCTestCase {
         registry.resolveLaunch(cliArguments: [
             "/Applications/HomMerge.app/Contents/MacOS/HomMerge",
         ])
+        registry.completeEmptyOpenDebounceForTesting()
 
         XCTAssertFalse(registry.hasPendingLaunchComparisonForTesting)
         XCTAssertTrue(registry.isLaunchResolvedForTesting)
         XCTAssertEqual(registry.consumeInitialRestoreSnapshot(), back)
         XCTAssertEqual(registry.consumeInitialRestoreSnapshot(), front)
         XCTAssertNil(registry.consumeInitialRestoreSnapshot())
+    }
+
+    func testOpenFilesDuringEmptyAwaitStartComparisonWithoutRestore() {
+        let front = WindowSnapshot(
+            selectedTabIndex: 0,
+            tabs: [TabSnapshot(leftPath: "/tmp/front-left", rightPath: "/tmp/front-right")]
+        )
+        registry.persistenceLoaderForTesting = {
+            AppSessionSnapshot(windows: [front])
+        }
+        registry.singleFileDebounceInterval = .seconds(60)
+
+        registry.resolveLaunch(cliArguments: [
+            "/Applications/HomMerge.app/Contents/MacOS/HomMerge",
+        ])
+        XCTAssertTrue(registry.isAwaitingEmptyOpenFilesForTesting)
+
+        XCTAssertEqual(
+            registry.noteOpenPaths(["/tmp/left.txt", "/tmp/right.txt"]),
+            .readyToReply
+        )
+
+        XCTAssertTrue(registry.hasPendingLaunchComparisonForTesting)
+        XCTAssertTrue(registry.isLaunchResolvedForTesting)
+        XCTAssertEqual(registry.restoreQueueCountForTesting, 0)
+        XCTAssertTrue(registry.shouldPresentMainWindowForTesting)
+        XCTAssertEqual(
+            registry.consumeInitialLaunchComparison()?.left.path,
+            URL(fileURLWithPath: "/tmp/left.txt").standardizedFileURL.path
+        )
+    }
+
+    func testNoteOpenURLsPreservesURLIdentityWithoutPathRebuild() {
+        let left = URL(fileURLWithPath: "/tmp/scoped-left.txt")
+        let right = URL(fileURLWithPath: "/tmp/scoped-right.txt")
+
+        XCTAssertEqual(registry.noteOpenURLs([left, right]), .readyToReply)
+        registry.resolveLaunch(cliArguments: [
+            "/Applications/HomMerge.app/Contents/MacOS/HomMerge",
+        ])
+
+        let request = registry.consumeInitialLaunchComparison()
+        XCTAssertEqual(request?.left.absoluteString, left.standardizedFileURL.absoluteString)
+        XCTAssertEqual(request?.right.absoluteString, right.standardizedFileURL.absoluteString)
+    }
+
+    func testNoteOpenURLsAfterLaunchStartsWarmComparisonWithoutSingleFileStage() {
+        registry.resolveLaunch(cliArguments: [
+            "/Applications/HomMerge.app/Contents/MacOS/HomMerge",
+        ])
+        registry.completeEmptyOpenDebounceForTesting()
+        XCTAssertTrue(registry.isLaunchResolvedForTesting)
+
+        let left = URL(fileURLWithPath: "/tmp/left.txt")
+        let right = URL(fileURLWithPath: "/tmp/right.txt")
+        XCTAssertEqual(registry.noteOpenURLs([left, right]), .readyToReply)
+
+        XCTAssertNil(registry.consumeInitialSingleFileURL())
+        XCTAssertNil(registry.consumeStagedWarmSingleFileURL())
+        let request = registry.lastWarmLaunchComparisonForTesting
+        XCTAssertEqual(request?.left.absoluteString, left.standardizedFileURL.absoluteString)
+        XCTAssertEqual(request?.right.absoluteString, right.standardizedFileURL.absoluteString)
+        XCTAssertEqual(registry.restoreQueueCountForTesting, 0)
     }
 
     func testResolveWithSingleOpenPathDebouncesThenPresentsLeftFile() {
@@ -152,6 +225,7 @@ final class LaunchFlowTests: XCTestCase {
         registry.resolveLaunch(cliArguments: [
             "/Applications/HomMerge.app/Contents/MacOS/HomMerge",
         ])
+        registry.completeEmptyOpenDebounceForTesting()
         XCTAssertTrue(registry.isLaunchResolvedForTesting)
 
         XCTAssertEqual(

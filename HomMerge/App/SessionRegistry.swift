@@ -26,6 +26,7 @@ final class SessionRegistry {
     private var restoreQueue: [WindowSnapshot] = []
     private var pendingLaunchComparison: LaunchComparisonRequest?
     private var pendingOpenPaths: [String] = []
+    private var pendingOpenURLs: [URL] = []
     private var stagedWarmLaunchComparison: LaunchComparisonRequest?
     private var stagedWarmSingleFileURL: URL?
     private var didResolveLaunch = false
@@ -38,7 +39,9 @@ final class SessionRegistry {
     private(set) var shouldPresentMainWindow = false
     private var pendingSingleFileURL: URL?
     private var singleFileDebounceTask: Task<Void, Never>?
+    private var emptyOpenDebounceTask: Task<Void, Never>?
     private var awaitingSecondOpenFile = false
+    private var awaitingEmptyOpenFiles = false
 
 #if DEBUG
     var singleFileDebounceInterval: Duration = .milliseconds(500)
@@ -59,61 +62,37 @@ final class SessionRegistry {
             return .accumulating
         }
         pendingOpenPaths.append(path)
+        syncPendingOpenURLsFromPaths()
 
-        guard pendingOpenPaths.count >= 2,
-              let request = LaunchArgumentsParser.parseOpenFiles(pendingOpenPaths)
-        else {
-            if didResolveLaunch, pendingOpenPaths.count == 1 {
-                let path = pendingOpenPaths[0]
-                pendingOpenPaths.removeAll()
-                handleWarmSingleOpenPath(path)
-                return .readyToReply
-            }
-            return .accumulating
-        }
-
-        if awaitingSecondOpenFile {
-            finalizeOpenFileComparison(request)
-            return .readyToReply
-        }
-
-        if didResolveLaunch {
-            pendingOpenPaths.removeAll()
-            handleWarmLaunchComparison(request)
-        }
-
-        return .readyToReply
+        return processPendingOpenFiles(preferringStoredURLs: false)
     }
 
-    /// Accepts a batch of paths (Finder Services) without treating the first as a single-file open.
+    /// Accepts a batch of paths without treating the first as a single-file open.
     func noteOpenPaths(_ paths: [String]) -> OpenFileHandlingResult {
         let uniquePaths = paths.reduce(into: [String]()) { result, path in
             guard !path.isEmpty, !result.contains(path) else { return }
             result.append(path)
         }
         pendingOpenPaths = uniquePaths
+        syncPendingOpenURLsFromPaths()
 
-        guard let request = LaunchArgumentsParser.parseOpenFiles(pendingOpenPaths) else {
-            if didResolveLaunch, pendingOpenPaths.count == 1 {
-                let path = pendingOpenPaths[0]
-                pendingOpenPaths.removeAll()
-                handleWarmSingleOpenPath(path)
-                return .readyToReply
+        return processPendingOpenFiles(preferringStoredURLs: false)
+    }
+
+    /// Accepts Launch Services / dock open URLs while preserving security-scoped URL identity.
+    func noteOpenURLs(_ urls: [URL]) -> OpenFileHandlingResult {
+        let uniqueURLs = urls.reduce(into: [URL]()) { result, url in
+            let standardized = url.standardizedFileURL
+            let path = standardized.path(percentEncoded: false)
+            guard !path.isEmpty, !result.contains(where: { $0.path(percentEncoded: false) == path }) else {
+                return
             }
-            return .accumulating
+            result.append(standardized)
         }
+        pendingOpenURLs = uniqueURLs
+        pendingOpenPaths = uniqueURLs.map { $0.path(percentEncoded: false) }
 
-        if awaitingSecondOpenFile {
-            finalizeOpenFileComparison(request)
-            return .readyToReply
-        }
-
-        if didResolveLaunch {
-            pendingOpenPaths.removeAll()
-            handleWarmLaunchComparison(request)
-        }
-
-        return .readyToReply
+        return processPendingOpenFiles(preferringStoredURLs: true)
     }
 
     /// Determines cold-launch content once per launch (CLI, drag-and-drop, restore, or empty).
@@ -125,19 +104,19 @@ final class SessionRegistry {
             pendingLaunchComparison = request
             restoreQueue = []
             didPrepareRestore = true
-            pendingOpenPaths.removeAll()
+            clearPendingOpenFiles()
             if !LaunchArgumentsParser.isFlagBasedComparison(cliArguments) {
                 requestMainWindowPresentation()
             }
             return
         }
 
-        if let request = LaunchArgumentsParser.parseOpenFiles(pendingOpenPaths) {
+        if let request = comparisonRequestFromPendingOpens(preferringStoredURLs: true) {
             didResolveLaunch = true
             pendingLaunchComparison = request
             restoreQueue = []
             didPrepareRestore = true
-            pendingOpenPaths.removeAll()
+            clearPendingOpenFiles()
             requestMainWindowPresentation()
             return
         }
@@ -147,9 +126,7 @@ final class SessionRegistry {
             return
         }
 
-        didResolveLaunch = true
-        prepareRestoreIfNeeded()
-        pendingOpenPaths.removeAll()
+        scheduleEmptyOpenDebounce()
     }
 
     func registerWarmLaunchHandlerIfNeeded(_ handler: @escaping (LaunchComparisonRequest) -> Void) {
@@ -337,10 +314,66 @@ final class SessionRegistry {
         }
     }
 
+    private func processPendingOpenFiles(preferringStoredURLs: Bool) -> OpenFileHandlingResult {
+        guard let request = comparisonRequestFromPendingOpens(preferringStoredURLs: preferringStoredURLs) else {
+            if didResolveLaunch, pendingOpenPaths.count == 1 {
+                let url = pendingOpenURLs.first
+                    ?? URL(
+                        fileURLWithPath: (pendingOpenPaths[0] as NSString).expandingTildeInPath,
+                        isDirectory: false
+                    ).standardizedFileURL
+                clearPendingOpenFiles()
+                handleWarmSingleOpenURL(url)
+                return .readyToReply
+            }
+            if awaitingEmptyOpenFiles, pendingOpenPaths.count == 1 {
+                scheduleSingleFileDebounce()
+            }
+            return .accumulating
+        }
+
+        if awaitingSecondOpenFile || awaitingEmptyOpenFiles {
+            finalizeOpenFileComparison(request)
+            return .readyToReply
+        }
+
+        if didResolveLaunch {
+            clearPendingOpenFiles()
+            handleWarmLaunchComparison(request)
+        }
+
+        return .readyToReply
+    }
+
+    private func comparisonRequestFromPendingOpens(preferringStoredURLs: Bool) -> LaunchComparisonRequest? {
+        if preferringStoredURLs, pendingOpenURLs.count >= 2 {
+            return LaunchComparisonRequest(
+                left: pendingOpenURLs[0],
+                right: pendingOpenURLs[1]
+            )
+        }
+        return LaunchArgumentsParser.parseOpenFiles(pendingOpenPaths)
+    }
+
+    private func syncPendingOpenURLsFromPaths() {
+        pendingOpenURLs = pendingOpenPaths.map { path in
+            URL(
+                fileURLWithPath: (path as NSString).expandingTildeInPath,
+                isDirectory: false
+            ).standardizedFileURL
+        }
+    }
+
+    private func clearPendingOpenFiles() {
+        pendingOpenPaths.removeAll()
+        pendingOpenURLs.removeAll()
+    }
+
     private func handleWarmLaunchComparison(_ request: LaunchComparisonRequest) {
 #if DEBUG
         lastWarmLaunchComparisonForTesting = request
 #endif
+        restoreQueue = []
         if deliverWarmLaunchComparison(request) {
             return
         }
@@ -351,11 +384,7 @@ final class SessionRegistry {
         }
     }
 
-    private func handleWarmSingleOpenPath(_ path: String) {
-        let expanded = (path as NSString).expandingTildeInPath
-        guard !expanded.isEmpty else { return }
-        let url = URL(fileURLWithPath: expanded, isDirectory: false).standardizedFileURL
-
+    private func handleWarmSingleOpenURL(_ url: URL) {
         if deliverWarmOpenFile(url) {
             return
         }
@@ -371,7 +400,27 @@ final class SessionRegistry {
         AppState.shared.presentMainWindowToken += 1
     }
 
+    private func scheduleEmptyOpenDebounce() {
+        cancelEmptyOpenDebounce()
+        cancelSingleFileDebounce()
+        awaitingEmptyOpenFiles = true
+        awaitingSecondOpenFile = false
+        let interval = singleFileDebounceInterval
+        emptyOpenDebounceTask = Task { @MainActor in
+            try? await Task.sleep(for: interval)
+            guard !Task.isCancelled else { return }
+            finalizeEmptyOpenAwait()
+        }
+    }
+
+    private func cancelEmptyOpenDebounce() {
+        emptyOpenDebounceTask?.cancel()
+        emptyOpenDebounceTask = nil
+    }
+
     private func scheduleSingleFileDebounce() {
+        cancelEmptyOpenDebounce()
+        awaitingEmptyOpenFiles = false
         cancelSingleFileDebounce()
         awaitingSecondOpenFile = true
         let interval = singleFileDebounceInterval
@@ -389,13 +438,24 @@ final class SessionRegistry {
 
     private func finalizeOpenFileComparison(_ request: LaunchComparisonRequest) {
         cancelSingleFileDebounce()
+        cancelEmptyOpenDebounce()
         awaitingSecondOpenFile = false
+        awaitingEmptyOpenFiles = false
         pendingLaunchComparison = request
         restoreQueue = []
         didPrepareRestore = true
         didResolveLaunch = true
-        pendingOpenPaths.removeAll()
+        clearPendingOpenFiles()
         requestMainWindowPresentation()
+    }
+
+    private func finalizeEmptyOpenAwait() {
+        guard awaitingEmptyOpenFiles, pendingOpenPaths.isEmpty else { return }
+        cancelEmptyOpenDebounce()
+        awaitingEmptyOpenFiles = false
+        didResolveLaunch = true
+        prepareRestoreIfNeeded()
+        clearPendingOpenFiles()
     }
 
     private func finalizeSingleFileOpen() {
@@ -403,20 +463,25 @@ final class SessionRegistry {
         cancelSingleFileDebounce()
         awaitingSecondOpenFile = false
 
-        let path = (pendingOpenPaths[0] as NSString).expandingTildeInPath
-        guard !path.isEmpty else {
+        let url = pendingOpenURLs.first ?? {
+            let path = (pendingOpenPaths[0] as NSString).expandingTildeInPath
+            guard !path.isEmpty else { return nil as URL? }
+            return URL(fileURLWithPath: path, isDirectory: false).standardizedFileURL
+        }()
+
+        guard let url else {
             didResolveLaunch = true
             didPrepareRestore = true
             restoreQueue = []
-            pendingOpenPaths.removeAll()
+            clearPendingOpenFiles()
             return
         }
 
-        pendingSingleFileURL = URL(fileURLWithPath: path, isDirectory: false).standardizedFileURL
+        pendingSingleFileURL = url
         didResolveLaunch = true
         didPrepareRestore = true
         restoreQueue = []
-        pendingOpenPaths.removeAll()
+        clearPendingOpenFiles()
         requestMainWindowPresentation()
         NSApplication.shared.reply(toOpenOrPrint: .success)
     }
@@ -426,9 +491,11 @@ final class SessionRegistry {
 
     func resetLaunchStateForTesting() {
         cancelSingleFileDebounce()
+        cancelEmptyOpenDebounce()
         awaitingSecondOpenFile = false
+        awaitingEmptyOpenFiles = false
         pendingSingleFileURL = nil
-        pendingOpenPaths = []
+        clearPendingOpenFiles()
         didResolveLaunch = false
         warmLaunchHandlers = []
         warmOpenFileHandlers = []
@@ -458,8 +525,17 @@ final class SessionRegistry {
         finalizeSingleFileOpen()
     }
 
+    func completeEmptyOpenDebounceForTesting() {
+        cancelEmptyOpenDebounce()
+        finalizeEmptyOpenAwait()
+    }
+
     var isAwaitingSecondOpenFileForTesting: Bool {
         awaitingSecondOpenFile
+    }
+
+    var isAwaitingEmptyOpenFilesForTesting: Bool {
+        awaitingEmptyOpenFiles
     }
 
     var hasPendingLaunchComparisonForTesting: Bool {
@@ -498,10 +574,10 @@ final class HomMergeAppDelegate: NSObject, NSApplicationDelegate {
         error: AutoreleasingUnsafeMutablePointer<NSString?>
     ) {
         let urls = FinderCompareService.fileURLs(from: pboard)
-        guard let request = FinderCompareService.comparisonRequest(fromFileURLs: urls) else {
+        guard FinderCompareService.comparisonRequest(fromFileURLs: urls) != nil else {
             return
         }
-        _ = SessionRegistry.shared.noteOpenPaths([request.left.path, request.right.path])
+        _ = SessionRegistry.shared.noteOpenURLs(urls)
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -513,18 +589,14 @@ final class HomMergeAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls {
-            if SessionRegistry.shared.noteOpenPath(url.path()) == .readyToReply {
-                application.reply(toOpenOrPrint: .success)
-            }
+        if SessionRegistry.shared.noteOpenURLs(urls) == .readyToReply {
+            application.reply(toOpenOrPrint: .success)
         }
     }
 
     func application(_ application: NSApplication, openFiles filenames: [String]) {
-        for path in filenames {
-            if SessionRegistry.shared.noteOpenPath(path) == .readyToReply {
-                application.reply(toOpenOrPrint: .success)
-            }
+        if SessionRegistry.shared.noteOpenPaths(filenames) == .readyToReply {
+            application.reply(toOpenOrPrint: .success)
         }
     }
 }
