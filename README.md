@@ -78,6 +78,12 @@ xcodegen generate
 
 `Configs/Local.xcconfig` is gitignored. Do not commit it. Without that file, the project still generates and builds, but code signing has no Team ID.
 
+### App Sandbox
+
+Official builds enable **App Sandbox** (`HomMerge/HomMerge.entitlements`) with user-selected file read/write access. Open panels, drag-and-drop, and Finder Services grant access; sessions persist security-scoped bookmarks so paths can be restored after relaunch.
+
+**CLI limitation:** Launching with raw file paths (for example `open -a HomMerge --args /path/a /path/b`) may fail under sandbox because those URLs are not user-selected. Prefer the UI, Services menu, or drag-and-drop. For local non-sandbox experiments only, remove or comment out `CODE_SIGN_ENTITLEMENTS` in `project.yml` (or clear App Sandbox in Xcode Signing & Capabilities), then run `xcodegen generate`. That configuration is unsupported for Mac App Store and official releases.
+
 ## Branches and Releases
 
 We use GitHub Flow.
@@ -173,6 +179,12 @@ xcodegen generate
 ```
 
 `Configs/Local.xcconfig` は gitignore 済みです。コミットしないでください。このファイルが無くてもプロジェクト生成とビルドはできますが、Team ID なしの署名状態になります。
+
+### App Sandbox
+
+公式ビルドは **App Sandbox**（`HomMerge/HomMerge.entitlements`）を有効にし、ユーザーが選んだファイルへの読み書きを許可します。オープンパネル、ドラッグ＆ドロップ、Finder のサービスで得たアクセスは、セキュリティスコープ付きブックマークとしてセッションに保存し、再起動後も復元します。
+
+**CLI の制限:** パス文字列だけの起動（例: `open -a HomMerge --args /path/a /path/b`）は、サンドボックス下では失敗することがあります。UI・サービスメニュー・D&D を使ってください。ローカル検証だけでサンドボックスを切る場合は、`project.yml` の `CODE_SIGN_ENTITLEMENTS` を外す（または Xcode の Signing & Capabilities で App Sandbox を外す）後に `xcodegen generate` してください。この構成は Mac App Store / 公式リリースではサポートしません。
 
 ## ブランチとリリース
 

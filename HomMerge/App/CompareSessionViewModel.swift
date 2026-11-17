@@ -76,12 +76,7 @@ final class CompareSessionViewModel {
 
     func setPath(_ url: URL, side: DiffPaneSide) {
         guard confirmDiscardUnsavedChangesIfNeeded() else { return }
-        switch side {
-        case .left:
-            leftURL = url
-        case .right:
-            rightURL = url
-        }
+        assignScopedURL(url, side: side)
         clearResult()
     }
 
@@ -101,12 +96,7 @@ final class CompareSessionViewModel {
     /// The other side's path is kept.
     func clearPath(side: DiffPaneSide) {
         guard confirmDiscardUnsavedChangesIfNeeded() else { return }
-        switch side {
-        case .left:
-            leftURL = nil
-        case .right:
-            rightURL = nil
-        }
+        assignScopedURL(nil, side: side)
         clearResult()
     }
 
@@ -150,15 +140,15 @@ final class CompareSessionViewModel {
 
     /// Sets both paths and runs compare immediately (e.g. open from folder results).
     func openComparedFiles(left: URL, right: URL) {
-        leftURL = left
-        rightURL = right
+        assignScopedURL(left, side: .left)
+        assignScopedURL(right, side: .right)
         compare()
     }
 
     /// Restores path selection without running compare (launch session restore).
     func restorePaths(left: URL?, right: URL?) {
-        leftURL = left
-        rightURL = right
+        assignScopedURL(left, side: .left)
+        assignScopedURL(right, side: .right)
         phase = .idle
         errorMessage = nil
     }
@@ -166,6 +156,29 @@ final class CompareSessionViewModel {
     private func clearResult() {
         phase = .idle
         errorMessage = nil
+    }
+
+    /// Replaces one side's URL while balancing security-scoped resource access.
+    private func assignScopedURL(_ url: URL?, side: DiffPaneSide) {
+        let current: URL?
+        switch side {
+        case .left:
+            current = leftURL
+        case .right:
+            current = rightURL
+        }
+        if let current {
+            current.stopAccessingSecurityScopedResource()
+        }
+        if let url {
+            _ = url.startAccessingSecurityScopedResource()
+        }
+        switch side {
+        case .left:
+            leftURL = url
+        case .right:
+            rightURL = url
+        }
     }
 
     /// Returns `false` when the user cancels discarding unsaved file-compare changes.

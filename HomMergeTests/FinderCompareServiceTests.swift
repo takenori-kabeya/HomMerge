@@ -9,8 +9,19 @@ final class FinderCompareServiceTests: XCTestCase {
 
         let request = FinderCompareService.comparisonRequest(fromFileURLs: [left, right])
 
-        XCTAssertEqual(request?.left.path, left.standardizedFileURL.path)
-        XCTAssertEqual(request?.right.path, right.standardizedFileURL.path)
+        XCTAssertEqual(request?.left, left.standardizedFileURL)
+        XCTAssertEqual(request?.right, right.standardizedFileURL)
+    }
+
+    func testComparisonRequestPreservesURLIdentityWithoutPathRebuild() {
+        let left = URL(fileURLWithPath: "/tmp/scoped-left.txt")
+        let right = URL(fileURLWithPath: "/tmp/scoped-right.txt")
+
+        let request = FinderCompareService.comparisonRequest(fromFileURLs: [left, right])
+
+        // Must keep the provided URL values (standardized), not rebuild via path strings only.
+        XCTAssertEqual(request?.left.absoluteString, left.standardizedFileURL.absoluteString)
+        XCTAssertEqual(request?.right.absoluteString, right.standardizedFileURL.absoluteString)
     }
 
     func testComparisonRequestReturnsNilWhenCountIsNotTwo() {

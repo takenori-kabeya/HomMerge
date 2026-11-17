@@ -100,6 +100,7 @@ final class WarmOpenFileTests: XCTestCase {
         registry.resolveLaunch(cliArguments: [
             "/Applications/HomMerge.app/Contents/MacOS/HomMerge",
         ])
+        registry.completeEmptyOpenDebounceForTesting()
         XCTAssertTrue(registry.isLaunchResolvedForTesting)
     }
 

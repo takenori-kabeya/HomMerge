@@ -56,12 +56,7 @@ struct WindowRoot: View {
             return
         }
 
-        if let snapshot = SessionRegistry.shared.consumeInitialRestoreSnapshot() {
-            SessionRegistry.shared.unregister(appModel)
-            appModel = AppViewModel(restoring: snapshot)
-            return
-        }
-
+        // Prefer explicit dock / icon opens over session restore.
         if let request = SessionRegistry.shared.consumeStagedWarmLaunchComparison() {
             appModel.selectedSession?.openComparedFiles(left: request.left, right: request.right)
             return
@@ -69,6 +64,12 @@ struct WindowRoot: View {
 
         if let url = SessionRegistry.shared.consumeStagedWarmSingleFileURL() {
             appModel.selectedSession?.applyDockDroppedFile(url)
+            return
+        }
+
+        if let snapshot = SessionRegistry.shared.consumeInitialRestoreSnapshot() {
+            SessionRegistry.shared.unregister(appModel)
+            appModel = AppViewModel(restoring: snapshot)
         }
     }
 

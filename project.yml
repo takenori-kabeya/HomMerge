@@ -72,6 +72,7 @@ targets:
         DEAD_CODE_STRIPPING: YES
         ENABLE_USER_SCRIPT_SANDBOXING: NO
         STRING_CATALOG_GENERATE_SYMBOLS: YES
+        CODE_SIGN_ENTITLEMENTS: HomMerge/HomMerge.entitlements
         CODE_SIGN_STYLE: Automatic
         SWIFT_STRICT_CONCURRENCY: complete
       configs:

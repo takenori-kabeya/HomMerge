@@ -3,6 +3,21 @@ import Foundation
 struct TabSnapshot: Codable, Equatable, Sendable {
     var leftPath: String?
     var rightPath: String?
+    /// Security-scoped bookmark used to restore sandbox access after relaunch.
+    var leftBookmark: Data?
+    var rightBookmark: Data?
+
+    init(
+        leftPath: String? = nil,
+        rightPath: String? = nil,
+        leftBookmark: Data? = nil,
+        rightBookmark: Data? = nil
+    ) {
+        self.leftPath = leftPath
+        self.rightPath = rightPath
+        self.leftBookmark = leftBookmark
+        self.rightBookmark = rightBookmark
+    }
 }
 
 struct WindowSnapshot: Codable, Equatable, Sendable {
