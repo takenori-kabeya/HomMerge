@@ -44,6 +44,15 @@ targets:
           - $(SRCROOT)/docs/EULA.md
         outputFiles:
           - $(DERIVED_FILE_DIR)/EULA.rtf
+      - name: Generate Help.rtf
+        basedOnDependencyAnalysis: false
+        script: "OUTPUT_DIR=\"${DERIVED_FILE_DIR}\" \"${SRCROOT}/Scripts/generate-help-rtf.sh\""
+        inputFiles:
+          - $(SRCROOT)/docs/Help.md
+          - $(SRCROOT)/docs/Help.ja.md
+        outputFiles:
+          - $(DERIVED_FILE_DIR)/Help.rtf
+          - $(DERIVED_FILE_DIR)/Help.ja.rtf
     postBuildScripts:
       - name: Copy EULA.rtf to bundle
         basedOnDependencyAnalysis: false
@@ -54,6 +63,18 @@ targets:
           - $(DERIVED_FILE_DIR)/EULA.rtf
         outputFiles:
           - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/EULA.rtf
+      - name: Copy Help.rtf to bundle
+        basedOnDependencyAnalysis: false
+        script: |
+          mkdir -p "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
+          cp "${DERIVED_FILE_DIR}/Help.rtf" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Help.rtf"
+          cp "${DERIVED_FILE_DIR}/Help.ja.rtf" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Help.ja.rtf"
+        inputFiles:
+          - $(DERIVED_FILE_DIR)/Help.rtf
+          - $(DERIVED_FILE_DIR)/Help.ja.rtf
+        outputFiles:
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Help.rtf
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Help.ja.rtf
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: jp.cabinetwork.HomMerge

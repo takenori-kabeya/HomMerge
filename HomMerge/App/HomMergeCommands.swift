@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// Menu commands that target the focused window's `AppViewModel`.
@@ -9,6 +10,23 @@ struct HomMergeCommands: Commands {
         CommandGroup(replacing: .appInfo) {
             Button("About HomMerge") {
                 openWindow(id: "about")
+            }
+        }
+
+        CommandGroup(replacing: .help) {
+            Button("HomMerge Help") {
+                openWindow(id: "help")
+            }
+            .keyboardShortcut("?", modifiers: [.command])
+
+            Divider()
+
+            Button("HomMerge on GitHub") {
+                NSWorkspace.shared.open(HomMergeProjectLinks.repositoryURL)
+            }
+
+            Button("Report an Issue…") {
+                NSWorkspace.shared.open(HomMergeProjectLinks.issuesURL)
             }
         }
 
