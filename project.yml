@@ -80,8 +80,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: jp.cabinetwork.HomMerge
         PRODUCT_NAME: HomMerge
         VERSIONING_SYSTEM: apple-generic
-        MARKETING_VERSION: "0.1.6"
-        CURRENT_PROJECT_VERSION: "56"
+        MARKETING_VERSION: "0.1.7"
+        CURRENT_PROJECT_VERSION: "60"
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_FILE: HomMerge/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: HomMerge
