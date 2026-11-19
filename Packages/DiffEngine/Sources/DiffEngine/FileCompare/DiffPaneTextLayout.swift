@@ -240,18 +240,6 @@ public enum DiffPaneTextLayout {
         return kept.reversed()
     }
 
-    /// Restores a trailing newline when `previous` had one but `edited` does not.
-    /// Does not remove a trailing newline that the user explicitly added in `edited`.
-    public static func normalizingTrailingNewline(edited: String, previous: String?) -> String {
-        guard let previous else { return edited }
-        let previousHadTrailing = previous.hasSuffix("\n")
-        let editedHasTrailing = edited.hasSuffix("\n")
-        if previousHadTrailing && !editedHasTrailing {
-            return edited + "\n"
-        }
-        return edited
-    }
-
     /// Whether a pane should rewrite its text storage / gutter for the latest presentation.
     ///
     /// While the pane has uncommitted keystrokes, skip rewrites unless `shouldForceApply`

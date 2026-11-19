@@ -48,10 +48,20 @@ enum DiffPaneLayoutGeometry {
 
         let length = (textView.string as NSString).length
         guard length > 0 else { return nil }
-        let characterLocation = min(max(location, 0), max(length - 1, 0))
-        let characterRange = NSRange(location: characterLocation, length: 1)
 
         layoutManager.ensureLayout(for: textContainer)
+        // Last empty presentation row sits at `string.length` (extra line fragment).
+        if location >= length {
+            var extra = layoutManager.extraLineFragmentUsedRect
+            if extra.height <= 0 {
+                extra = layoutManager.extraLineFragmentRect
+            }
+            guard extra.height > 0 else { return nil }
+            return extra.minY + textView.textContainerOrigin.y
+        }
+
+        let characterLocation = min(max(location, 0), max(length - 1, 0))
+        let characterRange = NSRange(location: characterLocation, length: 1)
         let glyphRange = layoutManager.glyphRange(
             forCharacterRange: characterRange,
             actualCharacterRange: nil

@@ -858,6 +858,51 @@ final class DiffPaneContentTextView: NSTextView {
         hostView?.undoManager ?? super.undoManager
     }
 
+    override func mouseDown(with event: NSEvent) {
+        let point = convert(event.locationInWindow, from: nil)
+        if placeCaretOnTrailingEmptyPresentationRowIfNeeded(at: point) {
+            return
+        }
+        super.mouseDown(with: event)
+    }
+
+    /// Last empty presentation row has no characters; it maps to `string.length` / extra line fragment.
+    private func placeCaretOnTrailingEmptyPresentationRowIfNeeded(at point: NSPoint) -> Bool {
+        guard let layoutManager, let textContainer, !presentationLines.isEmpty else {
+            return false
+        }
+        let lastRow = presentationLines.count - 1
+        let lastText = DiffPaneTextLayout.text(for: presentationLines[lastRow], side: paneSide)
+        guard lastText.isEmpty else { return false }
+
+        let length = (string as NSString).length
+        let lastStart = DiffPaneTextLayout.utf16Location(
+            forRow: lastRow,
+            in: presentationLines,
+            side: paneSide
+        )
+        guard lastStart == length else { return false }
+
+        layoutManager.ensureLayout(for: textContainer)
+        let origin = textContainerOrigin
+        var extra = layoutManager.extraLineFragmentUsedRect
+        if extra.height <= 0 {
+            extra = layoutManager.extraLineFragmentRect
+        }
+        extra.origin.x += origin.x
+        extra.origin.y += origin.y
+        extra.size.width = max(extra.width, bounds.width - extra.origin.x)
+
+        let insertionIndex = characterIndexForInsertion(at: point)
+        let inExtraFragment = extra.height > 0 && extra.contains(point)
+        let atOrPastLastRow = insertionIndex >= lastStart
+        guard inExtraFragment || atOrPastLastRow else { return false }
+
+        window?.makeFirstResponder(self)
+        setSelectedRange(NSRange(location: length, length: 0))
+        return true
+    }
+
     override func insertTab(_ sender: Any?) {
         let selection = selectedRange()
         let nsString = string as NSString

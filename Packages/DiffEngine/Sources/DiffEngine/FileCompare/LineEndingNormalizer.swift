@@ -20,11 +20,8 @@ public enum LineEndingNormalizer {
     public static func denormalizeFromLF(_ text: String, lineEnding: LineEndingStyle) -> String {
         let split = LineSplitter.splitDetailed(text)
         let separator = separator(for: lineEnding)
-        var result = split.lines.joined(separator: separator)
-        if split.endsWithNewline {
-            result += separator
-        }
-        return result
+        // Trailing empty line elements already encode a final newline; do not append again.
+        return split.lines.joined(separator: separator)
     }
 
     private static func separator(for lineEnding: LineEndingStyle) -> String {

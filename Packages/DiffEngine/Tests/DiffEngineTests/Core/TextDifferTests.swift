@@ -4,12 +4,13 @@ import Testing
 @Test func identicalTextsProduceOnlyEqualRows() {
     let result = TextDiffer.compare("alpha\nbeta\n", "alpha\nbeta\n")
 
-    #expect(result.leftLines == ["alpha", "beta"])
-    #expect(result.rightLines == ["alpha", "beta"])
+    #expect(result.leftLines == ["alpha", "beta", ""])
+    #expect(result.rightLines == ["alpha", "beta", ""])
     #expect(result.hasChanges == false)
-    #expect(result.alignedRows.count == 2)
+    #expect(result.alignedRows.count == 3)
     #expect(result.alignedRows[0] == DiffRow(kind: .equal, leftIndex: 0, rightIndex: 0))
     #expect(result.alignedRows[1] == DiffRow(kind: .equal, leftIndex: 1, rightIndex: 1))
+    #expect(result.alignedRows[2] == DiffRow(kind: .equal, leftIndex: 2, rightIndex: 2))
     #expect(result.hunks.isEmpty)
 }
 
@@ -46,10 +47,9 @@ import Testing
     #expect(result.hunks.count == 1)
 }
 
-@Test func trailingNewlineDoesNotCreateExtraEmptyLine() {
+@Test func trailingNewlineIsKeptAsEmptyLineElement() {
     let result = TextDiffer.compare("hello\n", "hello")
 
-    // Trailing-newline difference is a diff; line content stays "hello", with a virtual blank line on the side that has the newline.
     #expect(result.leftLines == ["hello", ""])
     #expect(result.rightLines == ["hello"])
     #expect(result.hasChanges == true)
@@ -75,9 +75,9 @@ import Testing
     #expect(result.leftEndsWithNewline == true)
     #expect(result.rightEndsWithNewline == true)
     #expect(result.hasChanges == false)
-    #expect(result.leftLines == ["hello"])
-    #expect(result.rightLines == ["hello"])
-    #expect(result.alignedRows.map(\.kind) == [.equal])
+    #expect(result.leftLines == ["hello", ""])
+    #expect(result.rightLines == ["hello", ""])
+    #expect(result.alignedRows.map(\.kind) == [.equal, .equal])
 }
 
 @Test func emptyVersusSingleNewlineIsAChange() {
@@ -87,9 +87,8 @@ import Testing
     #expect(result.rightEndsWithNewline == true)
     #expect(result.hasChanges == true)
     #expect(result.leftLines.isEmpty)
-    // "\n" splits to one blank content line; no extra virtual trailing row.
-    #expect(result.rightLines == [""])
-    #expect(result.alignedRows.map(\.kind) == [.insert])
+    #expect(result.rightLines == ["", ""])
+    #expect(result.alignedRows.map(\.kind) == [.insert, .insert])
 }
 
 @Test func lineSplitterReportsEndsWithNewline() {
@@ -102,11 +101,11 @@ import Testing
     #expect(noNewline.endsWithNewline == false)
 
     let withNewline = LineSplitter.splitDetailed("x\n")
-    #expect(withNewline.lines == ["x"])
+    #expect(withNewline.lines == ["x", ""])
     #expect(withNewline.endsWithNewline == true)
 
     let onlyNewline = LineSplitter.splitDetailed("\n")
-    #expect(onlyNewline.lines == [""])
+    #expect(onlyNewline.lines == ["", ""])
     #expect(onlyNewline.endsWithNewline == true)
 }
 
@@ -270,7 +269,7 @@ import Testing
 @Test func lineSplitterExposesPublicAPI() {
     #expect(LineSplitter.split("") == [])
     #expect(LineSplitter.split("x") == ["x"])
-    #expect(LineSplitter.split("x\n") == ["x"])
+    #expect(LineSplitter.split("x\n") == ["x", ""])
     #expect(LineSplitter.split("x\ny") == ["x", "y"])
     #expect(LineSplitter.split("x\n\ny") == ["x", "", "y"])
 }
