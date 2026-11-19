@@ -15,9 +15,10 @@ Long-lived branches such as `develop` or `release/*` are not used.
 ## Preparation
 
 1. Fork or clone the repository.
-2. Install required tools (refer to the environment requirements in [README.md](README.md)).
+2. Install required tools (refer to the environment requirements in [README.md](README.md)). Pandoc is required so builds can generate `EULA.rtf` and Help RTF from `docs/*.md`.
 3. Generate the Xcode project using `xcodegen generate`.
 4. For signed builds, copy `Configs/Local.xcconfig.example` to `Configs/Local.xcconfig`, set your `DEVELOPMENT_TEAM`, then run `xcodegen generate` again (do not commit `Local.xcconfig`).
+5. Edit in-app help in [`docs/Help.md`](docs/Help.md) / [`docs/Help.ja.md`](docs/Help.ja.md) (RTF is generated at build time; do not commit generated RTF).
 
 ## Development Workflow
 
@@ -113,9 +114,10 @@ For major specification changes, please share your proposed approach in an Issue
 ## 事前準備
 
 1. リポジトリを fork するか clone する
-2. 依存ツールを入れる（[README.md](README.md) の必要環境を参照）
+2. 依存ツールを入れる（[README.md](README.md) の必要環境を参照）。ビルドで `docs/*.md` から `EULA.rtf` / Help RTF を生成するため Pandoc が必要
 3. `xcodegen generate` で Xcode プロジェクトを生成する
 4. 署名付きビルドでは `Configs/Local.xcconfig.example` を `Configs/Local.xcconfig` にコピーし、`DEVELOPMENT_TEAM` を設定してから再度 `xcodegen generate` する（`Local.xcconfig` はコミットしない）
+5. アプリ内ヘルプは [`docs/Help.md`](docs/Help.md) / [`docs/Help.ja.md`](docs/Help.ja.md) を編集する（RTF はビルド時生成。生成物はコミットしない）
 
 ## 開発の流れ
 

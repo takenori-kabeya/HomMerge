@@ -46,6 +46,11 @@ struct HomMergeApp: App {
         }
         .defaultSize(width: 560, height: 520)
 
+        Window("HomMerge Help", id: "help") {
+            HelpView()
+        }
+        .defaultSize(width: 640, height: 560)
+
         Settings {
             SettingsView()
         }

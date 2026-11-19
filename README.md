@@ -22,7 +22,7 @@ The name is a portmanteau of **"Homage"** and **"Merge,"** chosen to express dee
 - macOS 14 or later
 - Xcode 26.6 or later (for development)
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) (generates `.xcodeproj` from `project.yml`)
-- [Pandoc](https://pandoc.org/) (generates `EULA.rtf`; install via `brew install pandoc`)
+- [Pandoc](https://pandoc.org/) (generates `EULA.rtf` and Help RTF; install via `brew install pandoc`)
 
 ## Structure
 
@@ -49,7 +49,7 @@ project.yml               # XcodeGen definition
 # Generate .xcodeproj (initial setup or after modifying project.yml)
 xcodegen generate
 
-# Build the app (requires pandoc to generate EULA.rtf for the About screen)
+# Build the app (requires pandoc to generate EULA.rtf and Help.rtf)
 xcodebuild -scheme HomMerge -configuration Debug build
 
 # Test DiffEngine (package-only)
@@ -98,6 +98,7 @@ Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 - Source code: [MIT](LICENSE)
 - App usage: [EULA (End-User License Agreement)](docs/EULA.md)
+- In-app help source: [Help](docs/Help.md) / [ヘルプ](docs/Help.ja.md)
 
 ## Disclaimer
 
@@ -124,7 +125,7 @@ This project is unaffiliated with the official WinMerge project.
 - macOS 14 以降
 - Xcode 26.6 以降（開発時）
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen)（`project.yml` から `.xcodeproj` を生成）
-- [Pandoc](https://pandoc.org/)（EULA.rtf 生成。`brew install pandoc`）
+- [Pandoc](https://pandoc.org/)（EULA.rtf / Help RTF 生成。`brew install pandoc`）
 
 ## 構成
 
@@ -151,7 +152,7 @@ project.yml               # XcodeGen 定義
 # .xcodeproj を生成（初回・project.yml 変更時）
 xcodegen generate
 
-# アプリをビルド（About 画面用 EULA.rtf 生成に pandoc が必要）
+# アプリをビルド（EULA.rtf / Help.rtf 生成に pandoc が必要）
 xcodebuild -scheme HomMerge -configuration Debug build
 
 # DiffEngine のテスト（パッケージ単体）
@@ -200,6 +201,7 @@ GitHub Flow を使います。
 
 - ソースコード: [MIT](LICENSE)
 - アプリの利用: [EULA（エンドユーザーライセンス契約）](docs/EULA.md)
+- アプリ内ヘルプの原稿: [Help](docs/Help.md) / [ヘルプ](docs/Help.ja.md)
 
 ## 免責
 

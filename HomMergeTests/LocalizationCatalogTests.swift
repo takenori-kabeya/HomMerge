@@ -8,13 +8,17 @@ final class LocalizationCatalogTests: XCTestCase {
         let requiredKeys = [
             "About HomMerge",
             "Compare",
+            "Could not load Help.rtf.",
             "Discard unsaved changes?",
             "Discard",
             "Cancel",
             "Copy →",
             "End User License Agreement (EULA)",
+            "HomMerge Help",
+            "HomMerge on GitHub",
             "Open two folders to compare",
             "Move to Trash",
+            "Report an Issue…",
         ]
         assertCatalog(catalog, contains: requiredKeys, file: "Localizable.xcstrings")
     }
