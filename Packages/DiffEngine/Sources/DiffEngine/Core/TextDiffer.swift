@@ -7,8 +7,8 @@ public enum TextDiffer {
     ) -> TextDiffResult {
         let leftSplit = LineSplitter.splitDetailed(left)
         let rightSplit = LineSplitter.splitDetailed(right)
-        var leftLines = leftSplit.lines
-        var rightLines = rightSplit.lines
+        let leftLines = leftSplit.lines
+        let rightLines = rightSplit.lines
 
         let leftItems = indexedLines(leftLines, options: options)
         let rightItems = indexedLines(rightLines, options: options)
@@ -40,30 +40,12 @@ public enum TextDiffer {
             }
         }
 
-        var alignedRows = coalesceModifies(
+        let alignedRows = coalesceModifies(
             rawRows,
             leftLines: leftLines,
             rightLines: rightLines,
             computeInlineDiffs: options.computeInlineDiffs
         )
-
-        // Only synthesize a trailing-newline row when content lines already match.
-        // e.g. "" vs "\n" already differs as [] vs [""] after split.
-        if leftSplit.endsWithNewline != rightSplit.endsWithNewline,
-           leftSplit.lines == rightSplit.lines
-        {
-            if leftSplit.endsWithNewline {
-                leftLines.append("")
-                alignedRows.append(
-                    DiffRow(kind: .delete, leftIndex: leftLines.count - 1, rightIndex: nil)
-                )
-            } else {
-                rightLines.append("")
-                alignedRows.append(
-                    DiffRow(kind: .insert, leftIndex: nil, rightIndex: rightLines.count - 1)
-                )
-            }
-        }
 
         let hunks = makeHunks(from: alignedRows)
 

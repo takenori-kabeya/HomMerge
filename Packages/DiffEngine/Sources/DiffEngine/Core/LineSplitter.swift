@@ -14,9 +14,10 @@ public struct LineSplitResult: Sendable, Equatable {
 public enum LineSplitter {
     /// Splits `text` on `\n`.
     ///
-    /// - A trailing newline does not create an extra empty line.
+    /// - A trailing newline keeps a final empty element (`"hello\n"` → `["hello", ""]`).
     /// - Empty input yields an empty array.
     /// - Internal blank lines are preserved as `""`.
+    /// - Round-trip: `split(text).joined(separator: "\n") == text` for LF text.
     public static func split(_ text: String) -> [String] {
         splitDetailed(text).lines
     }
@@ -28,10 +29,7 @@ public enum LineSplitter {
             return LineSplitResult(lines: [], endsWithNewline: false)
         }
 
-        var lines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
-        if endsWithNewline, lines.last == "" {
-            lines.removeLast()
-        }
+        let lines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         return LineSplitResult(lines: lines, endsWithNewline: endsWithNewline)
     }
 }

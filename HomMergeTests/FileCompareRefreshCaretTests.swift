@@ -28,10 +28,11 @@ final class FileCompareRefreshCaretTests: XCTestCase {
         try "a\nb\n".write(to: rightURL, atomically: true, encoding: .utf8)
         viewModel.refresh()
 
-        XCTAssertEqual(viewModel.pendingCaretLineStartRestore?.row, 1)
+        // "a\nb\n" → presentation rows ["a", "b", ""] (trailing newline kept as empty row).
+        XCTAssertEqual(viewModel.pendingCaretLineStartRestore?.row, 2)
         XCTAssertEqual(viewModel.pendingCaretLineStartRestore?.side, .left)
         XCTAssertEqual(viewModel.pendingCaretLineStartRestore?.focus, true)
-        XCTAssertEqual(viewModel.scrollToRow, 1)
+        XCTAssertEqual(viewModel.scrollToRow, 2)
         XCTAssertGreaterThan(viewModel.caretLineStartRestoreToken, 0)
     }
 

@@ -84,21 +84,10 @@ public enum MergeOperations {
             }
         }
 
-        // Unchanged side keeps its trailing-newline flag; changed side takes the source side's.
-        let leftEnds: Bool
-        let rightEnds: Bool
-        switch direction {
-        case .leftToRight:
-            leftEnds = result.leftEndsWithNewline
-            rightEnds = result.leftEndsWithNewline
-        case .rightToLeft:
-            leftEnds = result.rightEndsWithNewline
-            rightEnds = result.rightEndsWithNewline
-        }
-
+        // Line arrays already include a trailing empty element when the text ends with `\n`.
         return MergedTexts(
-            leftText: joinLines(outLeft, endsWithNewline: leftEnds),
-            rightText: joinLines(outRight, endsWithNewline: rightEnds)
+            leftText: joinLines(outLeft),
+            rightText: joinLines(outRight)
         )
     }
 
@@ -130,11 +119,7 @@ public enum MergeOperations {
         )
     }
 
-    private static func joinLines(_ lines: [String], endsWithNewline: Bool) -> String {
-        if lines.isEmpty {
-            return endsWithNewline ? "\n" : ""
-        }
-        let body = lines.joined(separator: "\n")
-        return endsWithNewline ? body + "\n" : body
+    private static func joinLines(_ lines: [String]) -> String {
+        lines.joined(separator: "\n")
     }
 }

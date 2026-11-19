@@ -283,30 +283,6 @@ import Testing
     #expect(state.hasChanges == true)
 }
 
-@Test func normalizingTrailingNewlineKeepsPreviousTrailingNewline() {
-    let edited = DiffPaneTextLayout.normalizingTrailingNewline(
-        edited: "a\nb",
-        previous: "a\nb\n"
-    )
-    #expect(edited == "a\nb\n")
-}
-
-@Test func normalizingTrailingNewlineDoesNotAddNewlineWhenPreviousHadNone() {
-    let edited = DiffPaneTextLayout.normalizingTrailingNewline(
-        edited: "a\nb",
-        previous: "a\nb"
-    )
-    #expect(edited == "a\nb")
-}
-
-@Test func normalizingTrailingNewlineKeepsEditedTrailingNewline() {
-    let edited = DiffPaneTextLayout.normalizingTrailingNewline(
-        edited: "a\nb\n",
-        previous: "a\nb"
-    )
-    #expect(edited == "a\nb\n")
-}
-
 @Test func commitRoundTripWithTrailingNewlineMatchesOriginal() {
     var state = FileCompareState()
     state.setLeftText("a\nb\n")
@@ -314,14 +290,26 @@ import Testing
     #expect(state.selectHunk(0) == nil)
 
     let pane = DiffPaneTextLayout.contentPlainText(lines: state.presentation, side: .left)
-    let stripped = DiffPaneTextLayout.fileTextByDroppingGapRows(
+    let fileText = DiffPaneTextLayout.fileTextByDroppingGapRows(
         paneText: pane,
         lines: state.presentation,
         side: .left
     )
-    let normalized = DiffPaneTextLayout.normalizingTrailingNewline(
-        edited: stripped,
-        previous: state.leftText
+    #expect(fileText == state.leftText)
+}
+
+@Test func commitDoesNotRestoreRemovedTrailingNewline() {
+    var state = FileCompareState()
+    state.setLeftText("a\nb\n")
+    state.setRightText("a\nb\n")
+
+    let pane = DiffPaneTextLayout.contentPlainText(lines: state.presentation, side: .left)
+    #expect(pane.hasSuffix("\n"))
+    let withoutTrailing = String(pane.dropLast())
+    let fileText = DiffPaneTextLayout.fileTextByDroppingGapRows(
+        paneText: withoutTrailing,
+        lines: state.presentation,
+        side: .left
     )
-    #expect(normalized == state.leftText)
+    #expect(fileText == "a\nb")
 }

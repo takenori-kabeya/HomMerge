@@ -412,16 +412,12 @@ final class FileCompareViewModel {
     }
 
     func commitPaneEdit(side: DiffPaneSide, paneText: String) {
-        let stripped = DiffPaneTextLayout.fileTextByDroppingGapRows(
+        let fileText = DiffPaneTextLayout.fileTextByDroppingGapRows(
             paneText: paneText,
             lines: state.presentation,
             side: side
         )
         let current = side == .left ? state.leftText : state.rightText
-        let fileText = DiffPaneTextLayout.normalizingTrailingNewline(
-            edited: stripped,
-            previous: current
-        )
         guard fileText != current else { return }
 
         lastSaveError = nil
